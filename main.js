@@ -19,6 +19,7 @@ const myGameArea = {
         this.castleFields.forEach(el => {
             this.ourBlocks[el].classList = "castleField";
         });
+        return enemyGenerator.init(5);
     },
     init: function () {
         //obliczanie drogi dla oponętów i zamku
@@ -69,13 +70,69 @@ const myGameArea = {
         this.number = this.canvasHeight / 40 * this.canvasWidth / 40;
         console.log(this.number);
         for (let i = 0; i < this.number; i++) {
-            let test = document.createElement("div");
-            test.classList = "canvasBlock";
-            test.innerHTML = i;
-            this.canvas.append(test);
+            let create = document.createElement("div");
+            create.classList = "canvasBlock";
+            create.id = i;
+           // create.innerHTML = i;
+            this.canvas.append(create);
         }
         this.ourBlocks = document.querySelectorAll(".canvasBlock");
         return this.check();
     },
+}
+/*
+const enemyGenerator = {
+    numberOfEnemy: 0,
+    test:0,
+    generate: function () {
+        console.log("done");
+        setTimeout(() => {
+            let create = document.createElement("span");
+            create.classList = "enemy";
+            
+          //  myGameArea.canvas.append(create);
+            document.getElementById(3).append(create);
+       
+            let test = document.querySelectorAll(".enemy").length;
+            console.log(test)
+            return test;
+
+        }, 1000);
+    },
+    init: function (lvl) {
+        for (let i = 0; i < lvl; i++) {
+            this.generate();
+            console.log("working?")
+        }
+    }
+}
+
+*/
+const enemyGenerator = {
+    arr: new Array(),
+    init:function(x){
+for(let o = 0; o< x; o++){
+    let test = new Object();
+    test = {
+               name:"Enemy" + o,
+               healt: 100,
+               x: 1,
+               y: 2,
+               class: "enemy",
+               speed:10,
+               width:40 + "40px",
+               height:40 + "40px"
+    }
+    this.arr.push(test);
+    
+    
+}
+this.arr.forEach(element => {
+    let teste = document.createElement("div");
+    teste.className= this.arr[element].name;
+    myGameArea.canvas.append()
+});
+console.log(this.arr)
+    }
 }
 myGameArea.init();

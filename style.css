@@ -9,19 +9,35 @@
     background-color:red;
     display:flex;
     flex-wrap: wrap;
+    position:relative;
 }
 .canvasBlock{
     width:40px;
     height:40px;
-    background-color:blue;
+    background-image:url("img/grass.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .enemyPath{
     width:40px;
     height:40px;
-    background-color:green;
+    background-image:url("img/enemyPath.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
 }
 .castleField{
     width:40px;
     height:40px;
+    background-image:url("img/castle.png");
+    background-attachment: fixed;
+   
+}
+.enemy{
+    width:30px;
+    height:30px;
     background-color:red;
+    position: absolute;
 }

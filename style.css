@@ -1,0 +1,27 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+#canvas{
+    width:800px;
+    height:600px;
+    background-color:red;
+    display:flex;
+    flex-wrap: wrap;
+}
+.canvasBlock{
+    width:40px;
+    height:40px;
+    background-color:blue;
+}
+.enemyPath{
+    width:40px;
+    height:40px;
+    background-color:green;
+}
+.castleField{
+    width:40px;
+    height:40px;
+    background-color:red;
+}

@@ -1,7 +1,166 @@
 const myGameArea = {
     canvas: document.getElementById("canvas"),
-    canvasHeight: document.getElementById("canvas").offsetHeight,
-    canvasWidth: document.getElementById("canvas").offsetWidth,
+    ctx: this.canvas.getContext("2d"),
+    castle: {
+        width: 160,
+        height: 120,
+        x: 0,
+        y: 480,
+        img: document.getElementById("castleImg"),
+        health:100
+    },
+    grass: {
+        width: 40,
+        height: 40,
+        x: 40,
+        y: 40,
+        img: document.getElementById("grass")
+    },
+    enemyPath: {
+        width: 40,
+        height: 40,
+        x: 0,
+        y: 0,
+        img: document.getElementById("enemyPathImg")
+    },
+    start: function () {
+        this.canvas.height = 600;
+        this.canvas.width = 800;
+        this.drawElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.img, this.enemyPath.x, this.enemyPath.y+40);
+        this.drawElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.img, this.enemyPath.x, this.enemyPath.y);
+        this.drawElement(this.castle.width, this.castle.height, this.castle.img, this.castle.x, this.castle.y);
+        //obliczanie ścieżki potworów
+
+    },
+    drawElement: function (width, height, background, x, y) {
+        this.width = width;
+        this.height = height;
+        this.x = x;
+        this.y = y;
+        this.background = background;
+     //   console.log(this.background)
+         console.log(this.width)
+        console.log(this.castle.img)
+        this.ctx.drawImage(this.background, this.x, this.y,this.width,this.height);
+ //       this.ctx.fillRect(this.x,this.y,this.width,this.height);
+    }
+}
+myGameArea.start();
+
+
+
+/*const gameArea = {
+    canvas: document.getElementById("canvas"),
+    ctx: this.canvas.getContext('2d'),
+    startEnemyPathNumbers:{
+       one:120,
+       two:160,   // ?????
+    },
+    newxImage: function(width,height,src){
+        let image = new Image();
+        image.src = src;
+       return image;
+       },
+    castle:{  
+        x:50,
+        y:50,
+        width:160,
+        height:120,
+        src: "img/castle.png",
+        background:   undefined,
+    },
+    number:0,
+    init: function(){
+      this.canvas.width = 800;
+      this.canvas.height = 600;
+
+     let xd =  this.newxImage(this.castle.width,this.castle.height,this.castle.src);
+     console.log(xd);
+     this.drawElement(this.castle.width,this.castle.height,xd,this.castle.x,this.castle.y);
+    },
+    calculation: function(){
+
+    },
+    drawElement: function(width,height,background,x,y){
+
+      this.width = width;
+      this.height = height;
+      this.x = x;
+      this.y = y;
+      this.background = background;
+      console.log(this.background)
+ 
+      this.ctx.drawImage(this.background,10,10);
+   //  this.ctx.fillRect(this.x,this.y,this.width,this.height);
+    }
+
+
+}
+gameArea.init();
+/*
+    let test = document.getElementById("canvas");
+    let ctx = test.getContext("2d");
+    let test2 = new Image();
+    test2.src= "img/grass.png";
+    ctx.drawImage(test2,90,130,50,60);
+    console.log("xd")
+
+
+*/
+
+/*window.onload = function() {
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    let test2 = new Image();
+    test2.src="img/grass.png"
+    ctx.drawImage(test2, 0, 0);
+    console.log("xd")
+  }; */
+
+
+
+
+
+
+/*
+function startGame(){
+    myGameArea.start();
+}
+let test;
+const myGameArea = {
+    canvas: document.getElementById("canvas"),
+    ctx: this.canvas.getContext("2d"),
+    start: function(){
+        this.canvas.width=800;
+        this.canvas.height=600;
+       // document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+       for(let i = 0; i<40; i++){
+test = new this.mapGenerator(40,40,"red",50,50);
+       }
+    },
+    mapGenerator: function(width,height,background,x,y){
+        this.width = width;
+        this.height = height;
+        this.x = x;
+        this.y = y;   
+        var xd = this.ctx;
+        xd.fillStyle= background;
+        xd.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+startGame();
+
+*/
+
+
+
+
+
+
+
+/*
+const myGameArea = {
+    canvas: document.createElement("canvas"),
     number: 0,
     ourBlocks: undefined,
     enemyPathBlock: {
@@ -19,9 +178,13 @@ const myGameArea = {
         this.castleFields.forEach(el => {
             this.ourBlocks[el].classList = "castleField";
         });
-        return enemyGenerator.init(5);
+     //   return enemyGenerator.init(5);
     },
     init: function () {
+        this.canvas.height = 600;
+        this.canvas.width = 800;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         //obliczanie drogi dla oponętów i zamku
         this.enemypathArray.push(this.enemyPathBlock.one, this.enemyPathBlock.two)
         for (let j = 0; j < 6; j++) {
@@ -80,6 +243,7 @@ const myGameArea = {
         return this.check();
     },
 }
+ */
 /*
 const enemyGenerator = {
     numberOfEnemy: 0,
@@ -108,6 +272,7 @@ const enemyGenerator = {
 }
 
 */
+/*
 const enemyGenerator = {
     arr: new Array(),
     init:function(x){
@@ -135,4 +300,5 @@ this.arr.forEach(element => {
 console.log(this.arr)
     }
 }
-myGameArea.init();
+*/
+//myGameArea.init();

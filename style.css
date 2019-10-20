@@ -3,7 +3,7 @@
     padding:0;
     box-sizing:border-box;
 }
-#canvas{
+.canvas{
     width:800px;
     height:600px;
     background-color:red;
@@ -40,4 +40,9 @@
     height:30px;
     background-color:red;
     position: absolute;
+}
+.none{
+    display:none;
+    width:0;
+    height:0;
 }

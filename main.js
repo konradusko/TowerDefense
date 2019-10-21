@@ -72,13 +72,13 @@ const myGameArea = {
     this.number.width = this.canvas.width/40;  //ile kratek szerokosci
     this.number.height = this.canvas.height/40 //ile kratek wysokosci
     console.log(this.number)
- this.drawMap(); //rysowanie
+ this.drawMap(this.number.width,this.number.height); //rysowanie
 
     },
-    drawMap: function(){
+    drawMap: function(w,h){
        //tworzenie elementow trawy pod budowe wiezy
-        for (let j =0; j<15; j++){
-        for (let i = 0; i < 20; i++) {
+        for (let j =0; j<h; j++){
+        for (let i = 0; i <w; i++) {
             this.createElement(this.grass.width,this.grass.height,this.grass.x,this.grass.y,this.grass.img,this.grasspathArray);
             this.grass.x=this.grass.x+40;
         }

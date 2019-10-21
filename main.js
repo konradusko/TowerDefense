@@ -12,25 +12,119 @@ const myGameArea = {
     grass: {
         width: 40,
         height: 40,
-        x: 40,
-        y: 40,
-        img: document.getElementById("grass")
+        x: 0,
+        y: 0,
+        img: document.getElementById("grassImg")
     },
     enemyPath: {
         width: 40,
         height: 40,
         x: 0,
-        y: 0,
+        y: 40,
         img: document.getElementById("enemyPathImg")
     },
+    number:{
+        width:0,
+        height:0
+    },
+    enemypathArray:[],
+    grasspathArray:[],
+//56
+//5dol
+//8
     start: function () {
         this.canvas.height = 600;
         this.canvas.width = 800;
-        this.drawElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.img, this.enemyPath.x, this.enemyPath.y+40);
-        this.drawElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.img, this.enemyPath.x, this.enemyPath.y);
-        this.drawElement(this.castle.width, this.castle.height, this.castle.img, this.castle.x, this.castle.y);
-        //obliczanie ścieżki potworów
+        // obliczanie
+        for(let i =0; i<4; i++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+            this.enemyPath.x = this.enemyPath.x+40;
+        }
+        for(let j = 0; j<5; j++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.y = this.enemyPath.y+40;
+        }
+        for(let k = 0; k< 6; k++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+            this.enemyPath.x = this.enemyPath.x+40;
+        }
+        for(let o = 0; o<5; o++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.y = this.enemyPath.y-40;
+        }
+        for(let x = 0; x<8; x++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.x = this.enemyPath.x+40;
+        }
+        for(let z = 0; z<10; z++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.y = this.enemyPath.y+40;
+        }
+        for(let l = 0; l<10; l++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.x = this.enemyPath.x-40;
+        }
+        for(let c = 0; c<3; c++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.y = this.enemyPath.y+40;
+        }
+        for(let v = 0; v<5; v++){
+            this.createElement(this.enemyPath.width,this.enemyPath.height,this.enemyPath.x,this.enemyPath.y,this.enemyPath.img,this.enemypathArray);
+             this.enemyPath.x = this.enemyPath.x-40;
+        }
+     //   console.log(this.enemypathArray)
+   //    this.createElement(2,3,4,5);
+     //  this.createElement(2,3,4,6);
+    this.number.width = this.canvas.width/40;  //ile kratek szerokosci
+    this.number.height = this.canvas.height/40 //ile kratek wysokosci
+    console.log(this.number)
+    /*
+     this.enemypathArray.forEach(element => {
+       //  console.log(element)
+        this.drawElement(element.width,element.height,element.img,element.x,element.y)
+    });
+    */
+       console.log()
+      //  this.drawElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.img, this.enemyPath.x, this.enemyPath.y);
+    //  this.drawElement(this.enemypathArray[0].width,this.enemypathArray[0].height,this.enemypathArray[0].img,this.enemypathArray[0].x,this.enemypathArray[0].y)
+     // this.drawElement(this.enemypathArray[3].width,this.enemypathArray[3].height,this.enemypathArray[3].img,this.enemypathArray[3].x,this.enemypathArray[3].y)
+      
+ this.drawMap();
 
+    },
+    drawMap: function(){
+        console.log(this.enemypathArray)
+        console.log(this.number);
+        for (let j =0; j<15; j++){
+
+        for (let i = 0; i < 20; i++) {
+            if(this.grass.x === this.enemypathArray[0].x && this.grass.y === this.enemypathArray[0].y ){
+                continue;
+            }
+            this.createElement(this.grass.width,this.grass.height,this.grass.x,this.grass.y,this.grass.img,this.grasspathArray);
+            this.grass.x=this.grass.x+40;
+        }
+        this.grass.x = 0;
+        this.grass.y=this.grass.y+40;
+    }
+    this.drawElement(this.castle.width, this.castle.height, this.castle.img, this.castle.x, this.castle.y);
+    //    console.log(this.enemyPath.img)
+     //   console.log(this.grasspathArray)
+     //   console.log(this.enemypathArray)
+        this.grasspathArray.forEach(element => {
+            //  console.log(element)
+             this.drawElement(element.width,element.height,element.img,element.x,element.y)
+         });
+    
+    },
+    createElement: function(width,height,x,y,img,path){
+     let object = new Object();
+     object.width = width;
+     object.height = height;
+     object.x = x;
+     object.y = y;
+     object.img = img;
+     path.push(object);
     },
     drawElement: function (width, height, background, x, y) {
         this.width = width;
@@ -39,8 +133,8 @@ const myGameArea = {
         this.y = y;
         this.background = background;
      //   console.log(this.background)
-         console.log(this.width)
-        console.log(this.castle.img)
+       //  console.log(this.width)
+       // console.log(this.castle.img)
         this.ctx.drawImage(this.background, this.x, this.y,this.width,this.height);
  //       this.ctx.fillRect(this.x,this.y,this.width,this.height);
     }

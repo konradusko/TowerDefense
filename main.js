@@ -44,9 +44,10 @@ const myGameArea = {
     },
     interval:undefined,
     lvl:10,
-    enemypathArray: [],
+    enemypathArray: [],//scieżka dla przeciwników array
     grasspathArray: [],
-    enemyArray:[],
+    enemyArray:[],//dla potworków
+    breakPoints:[],//dla potworków break pointy
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -58,39 +59,50 @@ const myGameArea = {
         for (let i = 0; i < 4; i++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x + this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let j = 0; j < 5; j++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y + this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let k = 0; k < 6; k++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x + this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let o = 0; o < 5; o++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y - this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let x = 0; x < 8; x++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x + this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
+        console.log(this.breakPoints)
         for (let z = 0; z < 10; z++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y + this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let l = 0; l < 10; l++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x - this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let c = 0; c < 3; c++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y + this.oneBox;
-        }
+        };
+        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let v = 0; v < 5; v++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x - this.oneBox;
-        }
+        };
+     //   this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
+        console.log(this.breakPoints)
         this.number.width = this.canvas.width / this.oneBox; //ile kratek szerokosci
         this.number.height = this.canvas.height / this.oneBox //ile kratek wysokosci
         console.log(this.number)
@@ -123,42 +135,61 @@ const myGameArea = {
         let poziom = 10;
         this.enemyArray = [];
 for (let i =0; i<poziom; i++){
-    this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray,this.enemyOne.health);
-    this.enemyOne.x = this.enemyOne.x - 50;
+    //tworzenie potworków i dodawanie ich do arraya
+    this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y , this.enemyOne.img, this.enemyArray,this.enemyOne.health);
+    this.enemyOne.x = this.enemyOne.x - this.oneBox;
 }
 console.log(this.enemyArray)
    this.interval = setInterval(() => {
     this.drawEnemy();
-    console.log("xd")
-    console.log(this.enemyArray)
-}, 2000);
-      //  
-      //  this.createElement(40,40,40,40,this.grass.img,this.enemyArray,100)
-     //  this.drawElement(40,40,this.enemyArray[0].img,20,40)
- /*
-     //  this.ctx.fillRect(40,40,40,40);
-this.ctx_2.beginPath()
-  this.ctx_2.fillRect(40,40,40,40);
-  //this.ctx_2.stroke(); 
- // this.ctx_2.closePath();
-     setTimeout(() => {
-        this.ctx_2.clearRect(40,40,40,40)
-     }, 1000);
-    
-    */
+   // console.log("xd")
+   // console.log(this.enemyArray)
+}, 200); 
     },
     drawEnemy:function(){
 this.ctx_2.clearRect(0,0,this.canvas_2.height,this.canvas_2.width);
 if(this.enemyArray.length != 0){
     this.enemyArray.forEach(el => {
-
-        if(el.x < 120 ){
-            el.x = el.x+40;
-            this.ctx_2.fillRect(el.x,el.y,el.width,el.height)
-        }else{
+       // console.log(this.breakPoints[3].y)
+//console.log(this.breakPoints[4].x)
+//console.log(this.breakPoints[0].x)
+        if(el.x <= this.breakPoints[0].x +this.oneBox ){
+            console.log(1);
+            el.x = el.x+this.oneBox/2;
+            this.ctx_2.fillRect(el.x,el.y,el.width,el.height);
+        }else if(el.y <= this.breakPoints[1].y + this.oneBox && el.x < this.breakPoints[3].x){
+            console.log(2);
+            el.y = el.y+this.oneBox/2;
+            this.ctx_2.fillRect(el.x,el.y,el.width,el.height);
+        }else if(el.x <= this.breakPoints[2].x + this.oneBox){
+            console.log(3);
+            el.x = el.x + this.oneBox/2;
+        //    el.y=el.y - this.oneBox/2;
+            this.ctx_2.fillRect(el.x,el.y,el.width,el.height);
+           // console.log(this.enemyArray.slice(-1)[0])
+          //  console.log(this.breakPoints[3].y)
+          //  console.log(this.enemyArray)
+         // console.log(this.breakPoints[3].x)
+        } else if(el.y >=  this.breakPoints[3].y -this.oneBox/2 &&el.x != this.breakPoints[3].x +this.oneBox){
+            console.log(4);
+           // console.log("robi sie to ?")
+           el.y = el.y - this.oneBox/2 - 5;
+          // console.log( el.y = el.y - 20)
+    
+            this.ctx_2.fillRect(el.x,el.y,el.width,el.height);
+         
+        }else if(el.x <= this.breakPoints[4].x + this.oneBox){
+            console.log(5);
+              el.x = el.x +this.oneBox/2;
+              this.ctx_2.fillRect(el.x,el.y,el.width,el.height);
+        } else if(el.y <= this.breakPoints[5].y+this.oneBox){
+            console.log(6);
+            el.y = el.y + this.oneBox/2;
+            this.ctx_2.fillRect(el.x,el.y,el.width,el.height);
+        } else {
             this.enemyArray.shift(el)
             console.log(this.enemyArray)
-        }
+        } 
     });
 }else{
     console.log("array is empty")

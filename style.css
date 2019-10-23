@@ -3,46 +3,21 @@
     padding:0;
     box-sizing:border-box;
 }
-.canvas{
-    width:800px;
-    height:600px;
-    background-color:red;
-    display:flex;
-    flex-wrap: wrap;
-    position:relative;
-}
-.canvasBlock{
-    width:40px;
-    height:40px;
-    background-image:url("img/grass.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-.enemyPath{
-    width:40px;
-    height:40px;
-    background-image:url("img/enemyPath.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 
-}
-.castleField{
-    width:40px;
-    height:40px;
-    background-image:url("img/castle.png");
-    background-attachment: fixed;
-   
-}
-.enemy{
-    width:30px;
-    height:30px;
-    background-color:red;
-    position: absolute;
-}
 .none{
     display:none;
     width:0;
     height:0;
+}
+#map{
+    width:800px;
+    height:600px;
+    position: relative;
+}
+#canvas{
+    position: absolute;
+}
+#canvas2{
+    position: absolute;
+    z-index:2;
 }

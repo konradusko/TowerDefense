@@ -46,7 +46,6 @@ const myGameArea = {
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
-    breakPoints: [], //dla potworków break pointy
     promise: undefined,
     start: function () {
         this.ctx = this.canvas.getContext("2d");
@@ -60,49 +59,39 @@ const myGameArea = {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x + this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let j = 0; j < 5; j++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y + this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let k = 0; k < 6; k++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x + this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let o = 0; o < 5; o++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y - this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let x = 0; x < 8; x++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x + this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
-        console.log(this.breakPoints)
         for (let z = 0; z < 10; z++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y + this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let l = 0; l < 10; l++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x - this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let c = 0; c < 3; c++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.y = this.enemyPath.y + this.oneBox;
         };
-        this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
         for (let v = 0; v < 5; v++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x - this.oneBox;
         };
-        //   this.breakPoints.push(this.enemypathArray.slice(-1)[0]);
-        console.log(this.breakPoints)
+
         console.log(this.enemypathArray)
         this.number.width = this.canvas.width / this.oneBox; //ile kratek szerokosci
         this.number.height = this.canvas.height / this.oneBox //ile kratek wysokosci
@@ -142,23 +131,26 @@ const myGameArea = {
         for (let i = 0; i < poziom; i++) {
             //tworzenie potworków i dodawanie ich do arraya
             this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health);
-            this.enemyOne.x = this.enemyOne.x ;
+            this.enemyOne.x = this.enemyOne.x- this.oneBox/2 ;
         }
-        console.log(this.enemyArray)
+   let xd =      console.log(this.enemyArray);
+   console.log(xd)
 
         this.interval = setInterval(() => {
-            this.drawEnemy(numberTest++);
+            this.drawEnemy(numberTest ++);
             // console.log("xd")
             // console.log(this.enemyArray)
         }, 200);
     },
     drawEnemy: function (a) {
+  //   console.log(    this.enemyArray)
  if(a < this.enemypathArray.length){
+    // this.ctx_2.fillRect(0, 0, this.canvas_2.width, this.canvas_2.height);
+     
     this.enemyArray.forEach(element => {
-        this.ctx_2.clearRect(0, 0, this.canvas_2.height, this.canvas_2.width)
-        this.ctx_2.beginPath();
-        element.x = this.enemypathArray[a].x  ;
-        element.y = this.enemypathArray[a].y  ;
+        this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height)
+        element.x = this.enemypathArray[a].x +5 ;
+        element.y = this.enemypathArray[a].y +5 ;
         this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
     });
  }

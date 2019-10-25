@@ -6,7 +6,9 @@ const myGameArea = {
     oneBox: 40,
     buttons: {
         play: document.getElementById("buttonPlay"),
+        turretOneButton: document.getElementById("wiezaImg"),
     },
+    map: document.getElementById("map"),
     castle: {
         width: 160,
         height: 120,
@@ -40,7 +42,14 @@ const myGameArea = {
         y: 45,
         img: document.getElementById("grassImg"), //testowo to i trawa dobra
         health: 100,
-        index:0
+        index: 0
+    },
+    turretOne: {
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        range: 2,
     },
     interval: undefined,
     lvl: 10,
@@ -119,61 +128,99 @@ const myGameArea = {
         //button play rozpoczyna produkcje tych przeklętych bestii
 
         this.buttons.play.addEventListener("click", () => {
-
             this.createEnemy();
         })
+        this.buttons.turretOneButton.addEventListener("click", (e) => {
+            this.createTurretImg(e);
+ })
+    },
+    createTurretImg: function (e) {
+        let test = document.createElement("img");
+        test.src = "img/wieza.png";
+        test.style.position = "absolute";
+        test.style.left = e.pageX + "px";
+        test.style.top = e.pageY + "px";
+        this.map.append(test);
+        this.map.addEventListener("mousemove", position)
+        this.map.addEventListener("click", (e) =>{
+            this.buildTurret(e)
+        })
+        function position(e) {
+            test.style.left = e.pageX + "px";
+            test.style.top = e.pageY + "px";
+        }
+    },
+    buildTurret: function (e) {
+
+        console.log(e.pageX)
+        console.log(e.pageY)
+        console.log("xd")
+        this.enemypathArray.forEach(elem => {
+            if (e.pageX != elem.x && e.pageY != elem.y) {
+                if (e.pageX + this.oneBox * 2 != elem.x && e.pageY + this.oneBox * 2 != elem.y) {
+                    if (e.pageX - this.oneBox * 2 != elem.x && e.pageY - this.oneBox * 2 != elem.y) {
+                        console.log("tutaj mogiem budowac")
+                    } else {
+                        console.log("tu nie moge")
+                    }
+                }
+
+            }
+         
+        });
     },
     createEnemy: function () {
 
-        let poziom = 10;
+        let poziom = 15;
         this.enemyArray = [];
         for (let i = 0; i < poziom; i++) {
             //tworzenie potworków i dodawanie ich do arraya
             console.log(this.enemyOne.index)
-            this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health,this.enemyOne.index);
-           this.enemyOne.x = this.enemyOne.x- this.oneBox/2 ;
-         //  this.enemyOne.index = this.enemyOne.index+1;
-           console.log(this.enemyOne.index)
+            this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health, this.enemyOne.index);
+            this.enemyOne.x = this.enemyOne.x - this.oneBox / 2;
+            //  this.enemyOne.index = this.enemyOne.index+1;
+            console.log(this.enemyOne.index)
         }
-
         this.interval = setInterval(() => {
-
             this.engine();
             // console.log("xd")
             console.log(this.enemyArray)
-        }, 1000);
+        }, 100);
     },
     engine: function () {
-  //   console.log(    this.enemyArray)
-   if(this.enemyArray.length != 0){
-    this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height)
-    // this.ctx_2.fillRect(0, 0, this.canvas_2.width, this.canvas_2.height);
-    this.enemyArray.forEach(element => {
-        if(element.index < this.enemypathArray.length){
-            if(element.x < this.enemypathArray[0].x){
-                element.x = element.x + this.oneBox/2;
-             // this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
-            }else{
-                element.x = this.enemypathArray[element.index].x +5 ;
-                element.y = this.enemypathArray[element.index].y +5 ;
-                this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
-                element.index= element.index +1;
-            }
-        }else{
-          this.enemyArray.shift(element);
-          console.log(this.enemyArray)
-            console.log("gameover")
+
+        // sprawdza czy sa potworki w arrau 
+
+        if (this.enemyArray.length != 0) {
+            this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height)
+            // this.ctx_2.fillRect(0, 0, this.canvas_2.width, this.canvas_2.height);
+            this.enemyArray.forEach(element => {
+                if (element.index < this.enemypathArray.length) {
+                    if (element.x < this.enemypathArray[0].x) {
+                        element.x = element.x + this.oneBox / 2;
+                        // this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+                    } else {
+                        element.x = this.enemypathArray[element.index].x + 5;
+                        element.y = this.enemypathArray[element.index].y + 5;
+                        this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+                        element.index = element.index + 1;
+                    }
+                } else {
+                    this.enemyArray.shift(element);
+                    console.log(this.enemyArray)
+                    console.log("gameover")
+                }
+
+            });
+        } else {
+            clearInterval(this.interval);
+            console.log("zero i bedzie nowa gra")
         }
-     
-    });
-   }else{
-       clearInterval(this.interval);
-       console.log("zero i bedzie nowa gra")
-   }
-   
- 
+
+
     },
-    createElement: function (width, height, x, y, img, path, life,index) {
+
+    createElement: function (width, height, x, y, img, path, life, index) {
         let object = new Object();
         object.width = width;
         object.height = height;

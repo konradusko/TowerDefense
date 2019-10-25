@@ -39,14 +39,14 @@ const myGameArea = {
         x: 5,
         y: 45,
         img: document.getElementById("grassImg"), //testowo to i trawa dobra
-        health: 100
+        health: 100,
+        index:0
     },
     interval: undefined,
     lvl: 10,
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
-    promise: undefined,
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -125,69 +125,55 @@ const myGameArea = {
     },
     createEnemy: function () {
 
-        let poziom = 1;
-        let numberTest = 0;
+        let poziom = 10;
         this.enemyArray = [];
         for (let i = 0; i < poziom; i++) {
             //tworzenie potworków i dodawanie ich do arraya
-            this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health);
-            this.enemyOne.x = this.enemyOne.x- this.oneBox/2 ;
+            console.log(this.enemyOne.index)
+            this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health,this.enemyOne.index);
+           this.enemyOne.x = this.enemyOne.x- this.oneBox/2 ;
+         //  this.enemyOne.index = this.enemyOne.index+1;
+           console.log(this.enemyOne.index)
         }
-   let xd =      console.log(this.enemyArray);
-   console.log(xd)
 
         this.interval = setInterval(() => {
-            this.drawEnemy(numberTest ++);
+
+            this.engine();
             // console.log("xd")
-            // console.log(this.enemyArray)
-        }, 200);
+            console.log(this.enemyArray)
+        }, 1000);
     },
-    drawEnemy: function (a) {
+    engine: function () {
   //   console.log(    this.enemyArray)
- if(a < this.enemypathArray.length){
+   if(this.enemyArray.length != 0){
+    this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height)
     // this.ctx_2.fillRect(0, 0, this.canvas_2.width, this.canvas_2.height);
-     
     this.enemyArray.forEach(element => {
-        this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height)
-        element.x = this.enemypathArray[a].x +5 ;
-        element.y = this.enemypathArray[a].y +5 ;
-        this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
-    });
- }
-       
-        /*
-        this.ctx_2.clearRect(0, 0, this.canvas_2.height, this.canvas_2.width)
-           console.log(this.enemyArray)
-           console.log(this.enemypathArray)
-        if (this.enemyArray.length != 0) {
-            this.ctx_2.clearRect(0, 0, this.canvas_2.height, this.canvas_2.width)
-            this.enemyArray.forEach(el => {
-             el.x = this.enemypathArray[a].x  ;
-                   el.y = this.enemypathArray[a].y  ;
-                   this.ctx_2.fillRect(el.x, el.y, el.width, el.height);
-
-
-            //     if(el.x < 5){
-            //        el.x = el.x +40;
-            //        console.log(this.enemyArray)
-            //     }else{
-            //         el.x = el.x = this.enemypathArray[a].x;
-            //         this.ctx_2.fillRect(el.x, el.y, el.width, el.height);
-            //     }
-            //    //     el.x = this.enemypathArray[a].x + 5 ;
-                //    el.y = this.enemypathArray[a].y + 5 ;
-              
-                  });
-
-        } else {
-            console.log("array is empty")
-            clearInterval(this.interval);
+        if(element.index < this.enemypathArray.length){
+            if(element.x < this.enemypathArray[0].x){
+                element.x = element.x + this.oneBox/2;
+             // this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+            }else{
+                element.x = this.enemypathArray[element.index].x +5 ;
+                element.y = this.enemypathArray[element.index].y +5 ;
+                this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+                element.index= element.index +1;
+            }
+        }else{
+          this.enemyArray.shift(element);
+          console.log(this.enemyArray)
+            console.log("gameover")
         }
-
-*/
-
+     
+    });
+   }else{
+       clearInterval(this.interval);
+       console.log("zero i bedzie nowa gra")
+   }
+   
+ 
     },
-    createElement: function (width, height, x, y, img, path, life) {
+    createElement: function (width, height, x, y, img, path, life,index) {
         let object = new Object();
         object.width = width;
         object.height = height;
@@ -195,6 +181,7 @@ const myGameArea = {
         object.y = y;
         object.img = img;
         object.life = life;
+        object.index = index;
         path.push(object);
     },
     drawElement: function (width, height, background, x, y) {

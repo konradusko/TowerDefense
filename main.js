@@ -50,6 +50,7 @@ const myGameArea = {
         width: 80,
         height: 80,
         range: 2,
+        index:2,
         img: document.getElementById("wiezaImg"),
 
     },
@@ -154,7 +155,8 @@ const myGameArea = {
             imageTurret.style.top = e.pageY + "px";
         }
         function removeAndBuild(x,y){
-            myGameArea.createElement(turret.width, turret.height, x, y, turret.img, myGameArea.turretsArray,0,0,turret.range);
+            //index dla wiezy bedzie oznaczal ile dmg bedzie zadawal stworom
+            myGameArea.createElement(turret.width, turret.height, x, y, turret.img, myGameArea.turretsArray,0, turret.index,turret.range);
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", buildTurret);
             document.getElementById(imageTurret).remove();
@@ -162,18 +164,84 @@ const myGameArea = {
         }
         function buildTurret(e) {
             //sprawdzanie czy mozna zbudować turret
-            let agree = false;
-            let notAgree = 0;
+            let agreePath = false;
+            let notAgreePath = 0;
+            let agreeTurrets = false;
+            let notAgreeTurrets = 0;
             let numberOfquad = myGameArea.oneBox;
             let clickX = Math.floor(e.pageX / numberOfquad);
             let clickY = Math.floor(e.pageY / numberOfquad);
+            if(myGameArea.turretsArray.length != 0 ){
+                myGameArea.turretsArray.forEach(el =>{
+                    console.log(clickX + "myszkaX")
+                    console.log(clickY + "myszkaY")
+                    console.log(Math.floor(el.x/numberOfquad))
+                    console.log(Math.floor(el.y/numberOfquad))
+                 //   console.log(Math.floor(el.y/numberOfquad)+1)
+                    if(
+                    //    clickX == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
+                        // clickX == Math.floor(el.x/numberOfquad +1) && clickY == Math.floor(el.y/numberOfquad +1)||
+                        // clickX == Math.floor(el.x/numberOfquad +2) && clickY == Math.floor(el.y/numberOfquad +2)||
+                        // clickX == Math.floor(el.x/numberOfquad +1) && clickY == Math.floor(el.y/numberOfquad +2)||
+                        // clickX == Math.floor(el.x/numberOfquad +2) && clickY == Math.floor(el.y/numberOfquad +1)||
+                        // clickX == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad +1)||
+                        // clickX == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad +2)||
+                        // clickX == Math.floor(el.x/numberOfquad +1) && clickY == Math.floor(el.y/numberOfquad)||
+                        // clickX +1== Math.floor(el.x/numberOfquad ) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        //  clickX +2== Math.floor(el.x/numberOfquad ) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        // clickX +1== Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad) ||
+                        // clickX +2== Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad)||
+                        // clickX == Math.floor(el.x/numberOfquad ) && clickY +3== Math.floor(el.y/numberOfquad)||
+                        // clickX == Math.floor(el.x/numberOfquad ) && clickY +1== Math.floor(el.y/numberOfquad)||
+                        // clickX == Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad)||
+                        // clickX-1 == Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad)||
+                        // clickX-1 == Math.floor(el.x/numberOfquad ) && clickY +1== Math.floor(el.y/numberOfquad)||
+                        // clickX+1 == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad)||
+                        // clickX+1 == Math.floor(el.x/numberOfquad ) && clickY-1 == Math.floor(el.y/numberOfquad)||
+                        // clickX-2 == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad)||
+                        // clickX+2 == Math.floor(el.x/numberOfquad ) && clickY -1 == Math.floor(el.y/numberOfquad)||
+                        // clickX+2 == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad)||
+                        // clickX+1 == Math.floor(el.x/numberOfquad ) && clickY-2 == Math.floor(el.y/numberOfquad)||
+                        // clickX-2 == Math.floor(el.x/numberOfquad ) && clickY-2 == Math.floor(el.y/numberOfquad)||
+                        // clickX-2 == Math.floor(el.x/numberOfquad ) && clickY+1 == Math.floor(el.y/numberOfquad)
+                        /////////
+                        clickX == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
+                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
+                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
+                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
+                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        clickX == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
+                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
+                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
+                        clickX-2 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        clickX-2 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
+                        clickX == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
+                        clickX == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
+                        clickX == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
+                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
+                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
+                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
+                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
+                        clickX-2 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
+                         clickX-2 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
+                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
+                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
+                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)
+                    ){
+                        console.log("nie moge budowac wiezy na wiezy")
+                        notAgreeTurrets = notAgreeTurrets +1;
+                    }
+                })
+            }
             myGameArea.enemypathArray.forEach(elem => {
                 if (clickX == elem.x / numberOfquad && clickY == elem.y / numberOfquad ||
                     clickX + 1 == elem.x / numberOfquad && clickY + 1 == elem.y / numberOfquad ||
                     clickX + 2 == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad) {
                     //nie moge zbudowac tutaj wiezy
-                    agree = false;
-                    notAgree = notAgree + 1;
+                    agreePath = false;
+                    notAgreePath = notAgreePath + 1;
                     console.log("nie")
                 } else if (clickX == castlePositionX && clickY == castlePositionY ||
                     clickX == castlePositionX + 1 && clickY == castlePositionY ||
@@ -189,18 +257,18 @@ const myGameArea = {
                     clickX == castlePositionX + 3 && clickY + 2 == castlePositionY
                 ) {
                     /// nie moge zbudowac tutaj wiezy, pan zamek mi przeszkadza
-                    agree = false;
-                    notAgree = 1;
+                    agreePath = false;
+                    notAgreePath = 1;
                 } else if (clickX + 1 < myGameArea.number.width && clickX + 2 < myGameArea.number.width &&
                     clickY + 1 < myGameArea.number.height && clickY + 2 < myGameArea.number.height) {
                     //moge tutaj budowac co chce
-                    agree = true;
+                    agreePath = true;
                 } else {
                     //jesli wszystko wyzej sie popsuje to tez nie zezwalam na budowe
-                    agree = false;
+                    agreePath = false;
                 }
             });
-            if (agree === true && notAgree === 0) {
+            if (agreePath === true && notAgreePath === 0 && notAgreeTurrets ===0) {
                 removeAndBuild(e.pageX, e.pageY);
                 console.log("moge budować")
             } else {

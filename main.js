@@ -50,7 +50,7 @@ const myGameArea = {
         width: 80,
         height: 80,
         range: 2,
-        img:document.getElementById("wiezaImg"),
+        img: document.getElementById("wiezaImg"),
 
     },
     interval: undefined,
@@ -58,6 +58,7 @@ const myGameArea = {
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
+    turretsArray:[],
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -133,95 +134,112 @@ const myGameArea = {
             this.createEnemy();
         })
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            this.createTurretImg(e,this.turretOne.img.src);
+            this.createTurretImg(e, this.turretOne.img.src,this.turretOne);
         })
     },
-    createTurretImg: function (e,turretSrc) {
-        let test = document.createElement("img");
-        test.src = turretSrc;
-        test.style.position = "absolute";
-        test.style.left = e.pageX + "px";
-        test.style.top = e.pageY + "px";
+    createTurretImg: function (e, turretSrc,turret) {
+        let imageTurret = document.createElement("img");
+        imageTurret.src = turretSrc;
+        imageTurret.id = imageTurret;
+        imageTurret.style.position = "absolute";
+        imageTurret.style.left = e.pageX + "px";
+        imageTurret.style.top = e.pageY + "px";
         let castlePositionY = this.castle.y / this.oneBox;
         let castlePositionX = this.castle.x;
-        this.map.append(test);
+        this.map.append(imageTurret);
         this.map.addEventListener("mousemove", position)
         this.map.addEventListener("click", buildTurret)
         function position(e) {
-            test.style.left = e.pageX + "px";
-            test.style.top = e.pageY + "px";
+            imageTurret.style.left = e.pageX + "px";
+            imageTurret.style.top = e.pageY + "px";
+        }
+        function removeAndBuild(x,y){
+            myGameArea.createElement(turret.width, turret.height, x, y, turret.img, myGameArea.turretsArray,0,0,turret.range);
+            myGameArea.map.removeEventListener("mousemove", position);
+            myGameArea.map.removeEventListener("click", buildTurret);
+            document.getElementById(imageTurret).remove();
+            myGameArea.drawTurret();
         }
         function buildTurret(e) {
-        //sprawdzanie czy mozna zbudować turret
+            //sprawdzanie czy mozna zbudować turret
+            let agree = false;
+            let notAgree = 0;
             let numberOfquad = myGameArea.oneBox;
             let clickX = Math.floor(e.pageX / numberOfquad);
             let clickY = Math.floor(e.pageY / numberOfquad);
-            console.log(clickX, clickY)
             myGameArea.enemypathArray.forEach(elem => {
-                if (clickX == elem.x / numberOfquad && clickY == elem.y / numberOfquad  ||
+                if (clickX == elem.x / numberOfquad && clickY == elem.y / numberOfquad ||
                     clickX + 1 == elem.x / numberOfquad && clickY + 1 == elem.y / numberOfquad ||
-                    clickX + 2 == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad ) {
-
-                    //    console.log(myGameArea.enemypathArray.length)
-                    console.log(" nie moge moge")
-                    console.log(Math.floor(e.pageX / 40 + 1))
-                    //    console.log(Math.floor(e.pageX/40))
-                    //    console.log(elem.x/40)
-                }else if(clickX == castlePositionX && clickY == castlePositionY || 
-                    clickX == castlePositionX+1 && clickY == castlePositionY || 
-                    clickX == castlePositionX+2 && clickY == castlePositionY || 
-                    clickX == castlePositionX+3 && clickY == castlePositionY||
-                    clickX  == castlePositionX && clickY +1 == castlePositionY||
-                    clickX  == castlePositionX && clickY +2 == castlePositionY ||
-                    clickX  == castlePositionX +1 && clickY +1 == castlePositionY||
-                    clickX  == castlePositionX +1 && clickY +2 == castlePositionY ||
-                    clickX  == castlePositionX +2 && clickY +1 == castlePositionY||
-                    clickX  == castlePositionX +2 && clickY +2 == castlePositionY ||
-                    clickX  == castlePositionX +3 && clickY +1 == castlePositionY||
-                    clickX  == castlePositionX +3 && clickY +2 == castlePositionY 
-                ){
-                    console.log("nie moge, pan zamek")
-                } else if(clickX+1 < myGameArea.number.width && clickX+2 < myGameArea.number.width &&
-                          clickY+1 < myGameArea.number.height && clickY +2 < myGameArea.number.height ) {
-                    console.log("MOGE")
-               
-                }else{
-                    console.log("nie moge")
+                    clickX + 2 == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad) {
+                    //nie moge zbudowac tutaj wiezy
+                    agree = false;
+                    notAgree = notAgree + 1;
+                    console.log("nie")
+                } else if (clickX == castlePositionX && clickY == castlePositionY ||
+                    clickX == castlePositionX + 1 && clickY == castlePositionY ||
+                    clickX == castlePositionX + 2 && clickY == castlePositionY ||
+                    clickX == castlePositionX + 3 && clickY == castlePositionY ||
+                    clickX == castlePositionX && clickY + 1 == castlePositionY ||
+                    clickX == castlePositionX && clickY + 2 == castlePositionY ||
+                    clickX == castlePositionX + 1 && clickY + 1 == castlePositionY ||
+                    clickX == castlePositionX + 1 && clickY + 2 == castlePositionY ||
+                    clickX == castlePositionX + 2 && clickY + 1 == castlePositionY ||
+                    clickX == castlePositionX + 2 && clickY + 2 == castlePositionY ||
+                    clickX == castlePositionX + 3 && clickY + 1 == castlePositionY ||
+                    clickX == castlePositionX + 3 && clickY + 2 == castlePositionY
+                ) {
+                    /// nie moge zbudowac tutaj wiezy, pan zamek mi przeszkadza
+                    agree = false;
+                    notAgree = 1;
+                } else if (clickX + 1 < myGameArea.number.width && clickX + 2 < myGameArea.number.width &&
+                    clickY + 1 < myGameArea.number.height && clickY + 2 < myGameArea.number.height) {
+                    //moge tutaj budowac co chce
+                    agree = true;
+                } else {
+                    //jesli wszystko wyzej sie popsuje to tez nie zezwalam na budowe
+                    agree = false;
                 }
-
             });
+            if (agree === true && notAgree === 0) {
+                removeAndBuild(e.pageX, e.pageY);
+                console.log("moge budować")
+            } else {
+                console.log("nie moge ")
+            }
         }
     },
+    drawTurret: function(){
+        //rysowanie wiez z arrayu
+       console.log(this.turretsArray)
+        this.turretsArray.forEach(e => {
+        this.ctx_2.drawImage(e.img,e.x, e.y, e.width, e.height);
+      });
+    },
     createEnemy: function () {
-
-        let poziom = 15;
-        this.enemyArray = [];
+        let poziom = 15; // "poziom" ile potworow ma sie wygenerowacm bedzie to zalezne od poziomu
+        this.enemyArray = []; //zawsze zeruje array
         for (let i = 0; i < poziom; i++) {
-            //tworzenie potworków i dodawanie ich do arraya
-            console.log(this.enemyOne.index)
+            //tworzenie potworków i dodawanie ich do arraya 
             this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health, this.enemyOne.index);
-            this.enemyOne.x = this.enemyOne.x - this.oneBox / 2;
-            //  this.enemyOne.index = this.enemyOne.index+1;
-            console.log(this.enemyOne.index)
+            this.enemyOne.x = this.enemyOne.x - this.oneBox / 2; // kazdy kolejny jest odsuniety od siebie
         }
+        //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
             this.engine();
-            // console.log("xd")
-            console.log(this.enemyArray)
-        }, 100);
+        }, 100); // predkosc poruszania sie bestii
     },
     engine: function () {
 
         // sprawdza czy sa potworki w arrau 
-
         if (this.enemyArray.length != 0) {
-            this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height)
-            // this.ctx_2.fillRect(0, 0, this.canvas_2.width, this.canvas_2.height);
+            this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height) // czysci nam mape z potworków
             this.enemyArray.forEach(element => {
+                // jesli droga przebyta przez potworka jest mniejsza od drogi to maszeruja 
                 if (element.index < this.enemypathArray.length) {
+                    //rysowanie i przemieszczanie potworkami
                     if (element.x < this.enemypathArray[0].x) {
                         element.x = element.x + this.oneBox / 2;
-                        // this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+
                     } else {
                         element.x = this.enemypathArray[element.index].x + 5;
                         element.y = this.enemypathArray[element.index].y + 5;
@@ -229,6 +247,7 @@ const myGameArea = {
                         element.index = element.index + 1;
                     }
                 } else {
+                    // tutaj droga byla juz wieksza to potworek dotarl do zamku
                     this.enemyArray.shift(element);
                     console.log(this.enemyArray)
                     console.log("gameover")
@@ -236,6 +255,7 @@ const myGameArea = {
 
             });
         } else {
+            // nie ma juz zadnych potworków to zeruje interval
             clearInterval(this.interval);
             console.log("zero i bedzie nowa gra")
         }
@@ -243,7 +263,7 @@ const myGameArea = {
 
     },
 
-    createElement: function (width, height, x, y, img, path, life, index) {
+    createElement: function (width, height, x, y, img, path, life, index,range) {
         let object = new Object();
         object.width = width;
         object.height = height;
@@ -252,6 +272,7 @@ const myGameArea = {
         object.img = img;
         object.life = life;
         object.index = index;
+        object.range = range;
         path.push(object);
     },
     drawElement: function (width, height, background, x, y) {

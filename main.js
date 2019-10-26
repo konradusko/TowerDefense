@@ -142,33 +142,60 @@ const myGameArea = {
         test.style.top = e.pageY + "px";
         this.map.append(test);
         this.map.addEventListener("mousemove", position)
-        this.map.addEventListener("click", (e) =>{
-            this.buildTurret(e)
-        })
+        this.map.addEventListener("click", buildTurret)
         function position(e) {
             test.style.left = e.pageX + "px";
             test.style.top = e.pageY + "px";
         }
-    },
-    buildTurret: function (e) {
+        function buildTurret(e){
 
-        console.log(e.pageX)
-        console.log(e.pageY)
-        console.log("xd")
-        this.enemypathArray.forEach(elem => {
-            if (e.pageX != elem.x && e.pageY != elem.y) {
-                if (e.pageX + this.oneBox * 2 != elem.x && e.pageY + this.oneBox * 2 != elem.y) {
-                    if (e.pageX - this.oneBox * 2 != elem.x && e.pageY - this.oneBox * 2 != elem.y) {
-                        console.log("tutaj mogiem budowac")
-                    } else {
-                        console.log("tu nie moge")
-                    }
+          //console.log(Math.round(e.pageX/40))
+            // console.log(e.pageX/40)
+            console.log(Math.floor(e.pageX/40) + "poczatkowe")
+            console.log(Math.floor(e.pageY/40) + "poczatkowe")
+            console.log(Math.floor(e.pageX/40 +2))
+            console.log(Math.floor(e.pageY/40 +2))
+            console.log(Math.floor(e.pageX/40 +3))
+            console.log(Math.floor(e.pageY/40 +3))
+            myGameArea.enemypathArray.forEach(elem => {
+                // if (e.pageX != elem.x + 40 && e.pageY != elem.y+40 ||e.pageX + this.oneBox * 2 != elem.x && e.pageY + this.oneBox * 2 != elem.y ||e.pageX - this.oneBox * 2 != elem.x && e.pageY - this.oneBox * 2 != elem.y) {
+                //   console.log("mogie")
+   // console.log(0/40)
+                // }else{
+                //     console.log("nie moge")
+                // }
+                if(Math.floor(e.pageX/40) == elem.x/40 && Math.floor(e.pageY/40) == elem.y/40 || Math.floor(e.pageX/40 + 1) == elem.x/40 && Math.floor(e.pageY/40 +1) == elem.y/40 || Math.floor(e.pageX/40 + 2) == elem.x/40 && Math.floor(e.pageY/40 +2) == elem.y/40  ){
+                //    console.log(myGameArea.enemypathArray.length)
+                    console.log(" nie moge moge")
+                 console.log( Math.floor(e.pageX/40 + 1))  
+                //    console.log(Math.floor(e.pageX/40))
+         //    console.log(elem.x/40)
+                }else{
+                    console.log("MOGE")
                 }
-
-            }
-         
-        });
+             
+            });
+        }
     },
+//     buildTurret: function (e) {
+// this.map.removeEventListener("click",false)
+//         console.log(e.pageX)
+//         console.log(e.pageY)
+//         console.log("xd")
+//         this.enemypathArray.forEach(elem => {
+//             if (e.pageX != elem.x && e.pageY != elem.y) {
+//                 if (e.pageX + this.oneBox * 2 != elem.x && e.pageY + this.oneBox * 2 != elem.y) {
+//                     if (e.pageX - this.oneBox * 2 != elem.x && e.pageY - this.oneBox * 2 != elem.y) {
+//                         console.log("tutaj mogiem budowac")
+//                     } else {
+//                         console.log("tu nie moge")
+//                     }
+//                 }
+
+//             }
+         
+//         });
+//     },
     createEnemy: function () {
 
         let poziom = 15;

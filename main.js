@@ -50,6 +50,8 @@ const myGameArea = {
         width: 80,
         height: 80,
         range: 2,
+        img:document.getElementById("wiezaImg"),
+
     },
     interval: undefined,
     lvl: 10,
@@ -131,67 +133,58 @@ const myGameArea = {
             this.createEnemy();
         })
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            this.createTurretImg(e);
+            this.createTurretImg(e,this.turretOne.img.src);
         })
     },
-    createTurretImg: function (e) {
+    createTurretImg: function (e,turretSrc) {
         let test = document.createElement("img");
-        test.src = "img/wieza.png";
+        test.src = turretSrc;
         test.style.position = "absolute";
         test.style.left = e.pageX + "px";
         test.style.top = e.pageY + "px";
         let castlePositionY = this.castle.y / this.oneBox;
         let castlePositionX = this.castle.x;
-        let castlePositionY_height = castlePositionY + this.castle.height / this.oneBox - 1;
-        let castlePositionX_width = castlePositionX + this.castle.width / this.oneBox - 1;
-        // console.log(castlePositionY_height)
-        // console.log(castlePositionX_width)
-        // console.log(castlePositionY)
-        // console.log(castlePositionX)
-        // console.log()
-        console.log(this.number.width, this.number.height)
         this.map.append(test);
         this.map.addEventListener("mousemove", position)
         this.map.addEventListener("click", buildTurret)
-
         function position(e) {
             test.style.left = e.pageX + "px";
             test.style.top = e.pageY + "px";
         }
-
         function buildTurret(e) {
-            let clickX = Math.floor(e.pageX / 40);
-            let clickY = Math.floor(e.pageY / 40);
+        //sprawdzanie czy mozna zbudować turret
+            let numberOfquad = myGameArea.oneBox;
+            let clickX = Math.floor(e.pageX / numberOfquad);
+            let clickY = Math.floor(e.pageY / numberOfquad);
             console.log(clickX, clickY)
-            //console.log(Math.round(e.pageX/40))
-            // console.log(e.pageX/40)
-            // console.log(Math.floor(e.pageX / 40) + "poczatkowe")
-            // console.log(Math.floor(e.pageY / 40) + "poczatkowe")
-            // console.log(Math.floor(e.pageX / 40 + 2))
-            // console.log(Math.floor(e.pageY / 40 + 2))
-            // console.log(Math.floor(e.pageX / 40 + 3))
-            // console.log(Math.floor(e.pageY / 40 + 3))
             myGameArea.enemypathArray.forEach(elem => {
-          
-             
-                // if (e.pageX != elem.x + 40 && e.pageY != elem.y+40 ||e.pageX + this.oneBox * 2 != elem.x && e.pageY + this.oneBox * 2 != elem.y ||e.pageX - this.oneBox * 2 != elem.x && e.pageY - this.oneBox * 2 != elem.y) {
-                //   console.log("mogie")
-                // console.log(0/40)
-                // }else{
-                //     console.log("nie moge")
-                // }
-                if (clickX == elem.x / 40 && clickY == elem.y / 40  ||
-                    clickX + 1 == elem.x / 40 && clickY + 1 == elem.y / 40 ||
-                    clickX + 2 == elem.x / 40 && clickY + 2 == elem.y / 40 ) {
+                if (clickX == elem.x / numberOfquad && clickY == elem.y / numberOfquad  ||
+                    clickX + 1 == elem.x / numberOfquad && clickY + 1 == elem.y / numberOfquad ||
+                    clickX + 2 == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad ) {
 
                     //    console.log(myGameArea.enemypathArray.length)
                     console.log(" nie moge moge")
                     console.log(Math.floor(e.pageX / 40 + 1))
                     //    console.log(Math.floor(e.pageX/40))
                     //    console.log(elem.x/40)
+                }else if(clickX == castlePositionX && clickY == castlePositionY || 
+                    clickX == castlePositionX+1 && clickY == castlePositionY || 
+                    clickX == castlePositionX+2 && clickY == castlePositionY || 
+                    clickX == castlePositionX+3 && clickY == castlePositionY||
+                    clickX  == castlePositionX && clickY +1 == castlePositionY||
+                    clickX  == castlePositionX && clickY +2 == castlePositionY ||
+                    clickX  == castlePositionX +1 && clickY +1 == castlePositionY||
+                    clickX  == castlePositionX +1 && clickY +2 == castlePositionY ||
+                    clickX  == castlePositionX +2 && clickY +1 == castlePositionY||
+                    clickX  == castlePositionX +2 && clickY +2 == castlePositionY ||
+                    clickX  == castlePositionX +3 && clickY +1 == castlePositionY||
+                    clickX  == castlePositionX +3 && clickY +2 == castlePositionY 
+                ){
+                    console.log("nie moge, pan zamek")
                 } else if(clickX+1 < myGameArea.number.width && clickX+2 < myGameArea.number.width &&
                           clickY+1 < myGameArea.number.height && clickY +2 < myGameArea.number.height ) {
                     console.log("MOGE")
+               
                 }else{
                     console.log("nie moge")
                 }
@@ -199,25 +192,6 @@ const myGameArea = {
             });
         }
     },
-    //     buildTurret: function (e) {
-    // this.map.removeEventListener("click",false)
-    //         console.log(e.pageX)
-    //         console.log(e.pageY)
-    //         console.log("xd")
-    //         this.enemypathArray.forEach(elem => {
-    //             if (e.pageX != elem.x && e.pageY != elem.y) {
-    //                 if (e.pageX + this.oneBox * 2 != elem.x && e.pageY + this.oneBox * 2 != elem.y) {
-    //                     if (e.pageX - this.oneBox * 2 != elem.x && e.pageY - this.oneBox * 2 != elem.y) {
-    //                         console.log("tutaj mogiem budowac")
-    //                     } else {
-    //                         console.log("tu nie moge")
-    //                     }
-    //                 }
-
-    //             }
-
-    //         });
-    //     },
     createEnemy: function () {
 
         let poziom = 15;

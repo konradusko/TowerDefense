@@ -140,12 +140,12 @@ const myGameArea = {
             this.createEnemy();
         })
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            this.createTurretImg(e, this.turretOne.img.src, this.turretOne);
+            this.createTurretImg(e,  this.turretOne);
         })
     },
-    createTurretImg: function (e, turretSrc, turret) {
+    createTurretImg: function (e,  turret) {
         let imageTurret = document.createElement("img");
-        imageTurret.src = turretSrc;
+        imageTurret.src = turret.img.src;
         imageTurret.id = imageTurret;
         imageTurret.style.position = "absolute";
         imageTurret.style.left = e.pageX + "px";
@@ -159,6 +159,7 @@ const myGameArea = {
         function position(e) {
             imageTurret.style.left = e.pageX + "px";
             imageTurret.style.top = e.pageY + "px";
+         //   imageTurret.style.padding = e.pageX + 40 - turret.range/2 + turret.range + "px";
         }
 
         function removeAndBuild(x, y) {
@@ -220,8 +221,14 @@ const myGameArea = {
             myGameArea.enemypathArray.forEach(elem => {
                 if (clickX == elem.x / numberOfquad && clickY == elem.y / numberOfquad ||
                     clickX + 1 == elem.x / numberOfquad && clickY + 1 == elem.y / numberOfquad ||
-                    clickX + 2 == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad) {
+                    clickX + 2 == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad||
+                    clickX + 2 == elem.x / numberOfquad && clickY  == elem.y / numberOfquad||
+                    clickX + 1 == elem.x / numberOfquad && clickY  == elem.y / numberOfquad||
+                    clickX  == elem.x / numberOfquad && clickY + 1 == elem.y / numberOfquad||
+                    clickX == elem.x / numberOfquad && clickY + 2 == elem.y / numberOfquad) {
                     //nie moge zbudowac tutaj wiezy
+                    console.log(clickX)
+                    console.log(elem.x/40)
                     agreePath = false;
                     notAgreePath = notAgreePath + 1;
                     console.log("nie")
@@ -241,10 +248,13 @@ const myGameArea = {
                     /// nie moge zbudowac tutaj wiezy, pan zamek mi przeszkadza
                     agreePath = false;
                     notAgreePath = 1;
+                    console.log("BUG")
                 } else if (clickX + 1 < myGameArea.number.width && clickX + 2 < myGameArea.number.width &&
                     clickY + 1 < myGameArea.number.height && clickY + 2 < myGameArea.number.height) {
                     //moge tutaj budowac co chce
                     agreePath = true;
+                    console.log(clickX + "clicklem")
+                    console.log(elem.x/40)
                 } else {
                     //jesli wszystko wyzej sie popsuje to tez nie zezwalam na budowe
                     agreePath = false;

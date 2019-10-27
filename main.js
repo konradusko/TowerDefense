@@ -3,6 +3,8 @@ const myGameArea = {
     ctx: undefined,
     canvas_2: document.getElementById("canvas2"),
     ctx_2: undefined,
+    canvas_3: document.getElementById("canvas3"),
+    ctx_3: undefined,
     oneBox: 40,
     buttons: {
         play: document.getElementById("buttonPlay"),
@@ -41,7 +43,7 @@ const myGameArea = {
         x: 5,
         y: 45,
         img: document.getElementById("grassImg"), //testowo to i trawa dobra
-        health: 100,
+        health: 30,
         index: 0
     },
     turretOne: {
@@ -49,8 +51,9 @@ const myGameArea = {
         y: 0,
         width: 80,
         height: 80,
-        range: 2,
-        index:2,
+        range: 300,
+        index: 2,
+        speed: 2,
         img: document.getElementById("wiezaImg"),
 
     },
@@ -59,7 +62,7 @@ const myGameArea = {
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
-    turretsArray:[],
+    turretsArray: [],
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -67,6 +70,9 @@ const myGameArea = {
         this.ctx_2 = this.canvas_2.getContext("2d");
         this.canvas_2.height = 600;
         this.canvas_2.width = 800;
+        this.ctx_3 = this.canvas_3.getContext("2d");
+        this.canvas_3.height = 600;
+        this.canvas_3.width = 800;
         // obliczanie sciezki
         for (let i = 0; i < 4; i++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
@@ -110,7 +116,6 @@ const myGameArea = {
         this.number.height = this.canvas.height / this.oneBox //ile kratek wysokosci
         console.log(this.number)
         this.drawMap(this.number.width, this.number.height); //rysowanie
-
     },
     drawMap: function (w, h) {
         //tworzenie elementow trawy pod budowe wiezy
@@ -135,10 +140,10 @@ const myGameArea = {
             this.createEnemy();
         })
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            this.createTurretImg(e, this.turretOne.img.src,this.turretOne);
+            this.createTurretImg(e, this.turretOne.img.src, this.turretOne);
         })
     },
-    createTurretImg: function (e, turretSrc,turret) {
+    createTurretImg: function (e, turretSrc, turret) {
         let imageTurret = document.createElement("img");
         imageTurret.src = turretSrc;
         imageTurret.id = imageTurret;
@@ -150,88 +155,65 @@ const myGameArea = {
         this.map.append(imageTurret);
         this.map.addEventListener("mousemove", position)
         this.map.addEventListener("click", buildTurret)
+
         function position(e) {
             imageTurret.style.left = e.pageX + "px";
             imageTurret.style.top = e.pageY + "px";
         }
-        function removeAndBuild(x,y){
-            //index dla wiezy bedzie oznaczal ile dmg bedzie zadawal stworom
-            myGameArea.createElement(turret.width, turret.height, x, y, turret.img, myGameArea.turretsArray,0, turret.index,turret.range);
+
+        function removeAndBuild(x, y) {
+            //index dla wiezy bedzie oznaczal ile dmg bedzie zadawal stworom 
+            // a life szybkostrzelnosc
+            myGameArea.createElement(turret.width, turret.height, x, y, turret.img, myGameArea.turretsArray, turret.speed, turret.index, turret.range);
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", buildTurret);
             document.getElementById(imageTurret).remove();
             myGameArea.drawTurret();
         }
+
         function buildTurret(e) {
             //sprawdzanie czy mozna zbudować turret
             let agreePath = false;
             let notAgreePath = 0;
-            let agreeTurrets = false;
             let notAgreeTurrets = 0;
             let numberOfquad = myGameArea.oneBox;
             let clickX = Math.floor(e.pageX / numberOfquad);
             let clickY = Math.floor(e.pageY / numberOfquad);
-            if(myGameArea.turretsArray.length != 0 ){
-                myGameArea.turretsArray.forEach(el =>{
+            if (myGameArea.turretsArray.length != 0) {
+                //jeśli są już jakieś wieze to sprawdza czy wieża nie bedzie na wiezy
+                myGameArea.turretsArray.forEach(el => {
                     console.log(clickX + "myszkaX")
                     console.log(clickY + "myszkaY")
-                    console.log(Math.floor(el.x/numberOfquad))
-                    console.log(Math.floor(el.y/numberOfquad))
-                 //   console.log(Math.floor(el.y/numberOfquad)+1)
-                    if(
-                    //    clickX == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
-                        // clickX == Math.floor(el.x/numberOfquad +1) && clickY == Math.floor(el.y/numberOfquad +1)||
-                        // clickX == Math.floor(el.x/numberOfquad +2) && clickY == Math.floor(el.y/numberOfquad +2)||
-                        // clickX == Math.floor(el.x/numberOfquad +1) && clickY == Math.floor(el.y/numberOfquad +2)||
-                        // clickX == Math.floor(el.x/numberOfquad +2) && clickY == Math.floor(el.y/numberOfquad +1)||
-                        // clickX == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad +1)||
-                        // clickX == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad +2)||
-                        // clickX == Math.floor(el.x/numberOfquad +1) && clickY == Math.floor(el.y/numberOfquad)||
-                        // clickX +1== Math.floor(el.x/numberOfquad ) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        //  clickX +2== Math.floor(el.x/numberOfquad ) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        // clickX +1== Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad) ||
-                        // clickX +2== Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad)||
-                        // clickX == Math.floor(el.x/numberOfquad ) && clickY +3== Math.floor(el.y/numberOfquad)||
-                        // clickX == Math.floor(el.x/numberOfquad ) && clickY +1== Math.floor(el.y/numberOfquad)||
-                        // clickX == Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad)||
-                        // clickX-1 == Math.floor(el.x/numberOfquad ) && clickY +2== Math.floor(el.y/numberOfquad)||
-                        // clickX-1 == Math.floor(el.x/numberOfquad ) && clickY +1== Math.floor(el.y/numberOfquad)||
-                        // clickX+1 == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad)||
-                        // clickX+1 == Math.floor(el.x/numberOfquad ) && clickY-1 == Math.floor(el.y/numberOfquad)||
-                        // clickX-2 == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad)||
-                        // clickX+2 == Math.floor(el.x/numberOfquad ) && clickY -1 == Math.floor(el.y/numberOfquad)||
-                        // clickX+2 == Math.floor(el.x/numberOfquad ) && clickY == Math.floor(el.y/numberOfquad)||
-                        // clickX+1 == Math.floor(el.x/numberOfquad ) && clickY-2 == Math.floor(el.y/numberOfquad)||
-                        // clickX-2 == Math.floor(el.x/numberOfquad ) && clickY-2 == Math.floor(el.y/numberOfquad)||
-                        // clickX-2 == Math.floor(el.x/numberOfquad ) && clickY+1 == Math.floor(el.y/numberOfquad)
-                        /////////
-                        clickX == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
-                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
-                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
-                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
-                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        clickX == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
-                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
-                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
-                        clickX-2 == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        clickX-2 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
-                        clickX == Math.floor(el.x/numberOfquad) && clickY+1 == Math.floor(el.y/numberOfquad)||
-                        clickX == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
-                        clickX == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
-                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
-                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
-                        clickX+1 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
-                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
-                        clickX-2 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)||
-                         clickX-2 == Math.floor(el.x/numberOfquad) && clickY == Math.floor(el.y/numberOfquad)||
-                        clickX-1 == Math.floor(el.x/numberOfquad) && clickY+2 == Math.floor(el.y/numberOfquad)||
-                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY-1 == Math.floor(el.y/numberOfquad)||
-                        clickX+2 == Math.floor(el.x/numberOfquad) && clickY-2 == Math.floor(el.y/numberOfquad)
-                    ){
+                    console.log(Math.floor(el.x / numberOfquad))
+                    console.log(Math.floor(el.y / numberOfquad))
+                    //   console.log(Math.floor(el.y/numberOfquad)+1)
+                    if (clickX == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
+                        clickX + 2 == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 1 == Math.floor(el.x / numberOfquad) && clickY + 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 2 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
+                        clickX + 1 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
+                        clickX + 1 == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX == Math.floor(el.x / numberOfquad) && clickY + 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX - 1 == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX - 1 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
+                        clickX - 1 == Math.floor(el.x / numberOfquad) && clickY - 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX - 2 == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX - 2 == Math.floor(el.x / numberOfquad) && clickY - 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX == Math.floor(el.x / numberOfquad) && clickY - 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX == Math.floor(el.x / numberOfquad) && clickY - 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 1 == Math.floor(el.x / numberOfquad) && clickY - 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX - 1 == Math.floor(el.x / numberOfquad) && clickY - 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 1 == Math.floor(el.x / numberOfquad) && clickY - 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 2 == Math.floor(el.x / numberOfquad) && clickY + 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX - 2 == Math.floor(el.x / numberOfquad) && clickY - 2 == Math.floor(el.y / numberOfquad) ||
+                        // clickX - 2 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
+                        clickX - 1 == Math.floor(el.x / numberOfquad) && clickY + 2 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 2 == Math.floor(el.x / numberOfquad) && clickY - 1 == Math.floor(el.y / numberOfquad) ||
+                        clickX + 2 == Math.floor(el.x / numberOfquad) && clickY - 2 == Math.floor(el.y / numberOfquad)
+                    ) {
                         console.log("nie moge budowac wiezy na wiezy")
-                        notAgreeTurrets = notAgreeTurrets +1;
+                        notAgreeTurrets = notAgreeTurrets + 1;
                     }
                 })
             }
@@ -268,20 +250,22 @@ const myGameArea = {
                     agreePath = false;
                 }
             });
-            if (agreePath === true && notAgreePath === 0 && notAgreeTurrets ===0) {
+            if (agreePath === true && notAgreePath === 0 && notAgreeTurrets === 0) {
                 removeAndBuild(e.pageX, e.pageY);
                 console.log("moge budować")
             } else {
                 console.log("nie moge ")
+                window.alert("Nie można tutaj budować!")
             }
         }
     },
-    drawTurret: function(){
+    drawTurret: function () {
         //rysowanie wiez z arrayu
-       console.log(this.turretsArray)
+        this.ctx_3.clearRect(0, 0, this.canvas_3.width, this.canvas_3.height)
+        console.log(this.turretsArray)
         this.turretsArray.forEach(e => {
-        this.ctx_2.drawImage(e.img,e.x, e.y, e.width, e.height);
-      });
+            this.ctx_3.drawImage(e.img, e.x, e.y, e.width, e.height);
+        });
     },
     createEnemy: function () {
         let poziom = 15; // "poziom" ile potworow ma sie wygenerowacm bedzie to zalezne od poziomu
@@ -294,11 +278,14 @@ const myGameArea = {
         //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
             this.engine();
-        }, 100); // predkosc poruszania sie bestii
+        }, 1000); // predkosc poruszania sie bestii
     },
     engine: function () {
-
+        //  console.log(2 * Math.PI * 17)
         // sprawdza czy sa potworki w arrau 
+        // let grd = this.ctx_2.createRadialGradient(75, 50, 5, 90, 60, 100);
+        // grd.addColorStop(0, "red");
+        // grd.addColorStop(1, "white");
         if (this.enemyArray.length != 0) {
             this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height) // czysci nam mape z potworków
             this.enemyArray.forEach(element => {
@@ -307,12 +294,48 @@ const myGameArea = {
                     //rysowanie i przemieszczanie potworkami
                     if (element.x < this.enemypathArray[0].x) {
                         element.x = element.x + this.oneBox / 2;
-
                     } else {
+                        // console.log("HALO KURWA")
+
                         element.x = this.enemypathArray[element.index].x + 5;
                         element.y = this.enemypathArray[element.index].y + 5;
+
                         this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+                        // this.ctx_2.beginPath();
+                        // this.ctx_2.lineCap = "round";
+                        // this.ctx_2.strokeStyle = "#FF0000";
+                        // this.ctx_2.lineWidth = 4;
+                        // this.ctx_2.moveTo(element.x, element.y);
+                        // this.ctx_2.lineTo(element.x+element.life, element.y);
+                        // this.ctx_2.stroke();
                         element.index = element.index + 1;
+                        this.turretsArray.forEach(el => {
+                            //  console.log("HALO KURWA222222222222222")
+                            let TopLeftX = el.x + this.oneBox - el.range / 2;
+                            let TopLeftY = el.y + this.oneBox - el.range / 2;
+                            let TopRightX = TopLeftX + el.range;
+                            let TopRightY = TopLeftY;
+                            let BottomRightX = TopRightX;
+                            let BottomRightY = TopRightY + el.range;
+                            let BottomLeftX = BottomRightX - el.range;
+                            let BottomLeftY = BottomRightY;
+                            this.ctx_3.beginPath();
+                            this.ctx_3.rect(TopLeftX, TopLeftY, el.range, el.range)
+                            this.ctx_3.stroke();
+                            //   let range = el.range/2;
+
+                            // console.log("początkowe X" + el.x)
+                            // console.log("początkowe Y" + el.y)
+
+                            // console.log(TopLeftX)
+                            // console.log(TopLeftY)
+                            // console.log(BottomLeftX)
+                            // console.log(TopLeftX, TopLeftY, TopRightX, BottomRightY)
+                            if (element.x >= TopLeftX && element.x <= TopRightX && element.y >= TopLeftY && element.y <= BottomLeftY) {
+                                console.log("strzal")
+
+                            }
+                        })
                     }
                 } else {
                     // tutaj droga byla juz wieksza to potworek dotarl do zamku
@@ -320,7 +343,6 @@ const myGameArea = {
                     console.log(this.enemyArray)
                     console.log("gameover")
                 }
-
             });
         } else {
             // nie ma juz zadnych potworków to zeruje interval
@@ -331,7 +353,7 @@ const myGameArea = {
 
     },
 
-    createElement: function (width, height, x, y, img, path, life, index,range) {
+    createElement: function (width, height, x, y, img, path, life, index, range) {
         let object = new Object();
         object.width = width;
         object.height = height;

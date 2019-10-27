@@ -11,6 +11,8 @@ const myGameArea = {
     buttons: {
         play: document.getElementById("buttonPlay"),
         turretOneButton: document.getElementById("wiezaImg"),
+        turretTwoButton: document.getElementById("wiezaImg2"),
+        turretThreeButton: document.getElementById("wiezaImg3"),
         showTurretRange:document.getElementById("showTowerRange"),
     },
     map: document.getElementById("map"),
@@ -58,7 +60,26 @@ const myGameArea = {
         index: 2,
         speed: 2,
         img: document.getElementById("wiezaImg"),
-
+    },
+    turretTwo: {
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        range: 400,
+        index: 2,
+        speed: 2,
+        img: document.getElementById("wiezaImg2"),
+    },
+    turretThree: {
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        range: 500,
+        index: 2,
+        speed: 2,
+        img: document.getElementById("wiezaImg3"),
     },
     interval: undefined,
     lvl: 10,
@@ -145,17 +166,21 @@ const myGameArea = {
 
         this.buttons.play.addEventListener("click", () => {
             this.createEnemy();
-        })
+        });
         this.buttons.turretOneButton.addEventListener("click", (e) => {
             this.createTurretImg(e,  this.turretOne);
-        })
+        });
+        this.buttons.turretTwoButton.addEventListener("click", (e) => {
+            this.createTurretImg(e,  this.turretTwo);
+        });
+        this.buttons.turretThreeButton.addEventListener("click", (e) => {
+            this.createTurretImg(e,  this.turretThree);
+        });
         this.buttons.showTurretRange.addEventListener("click", ()=>{
-       
              this.showRange();
-        })
+        });
     },
     showRange: function(){
-     
         if(this.turretsArray.length != 0){
             if(  this.clickShowAndHide  == undefined ){
                 this.turretsArray.forEach(el =>{
@@ -163,6 +188,7 @@ const myGameArea = {
                     let TopLeftY = el.y + this.oneBox - el.range / 2;
                     this.ctx_4.beginPath();
                     this.ctx_4.strokeStyle = "red";
+                    this.ctx_4.lineWidth = 2;
                     this.ctx_4.rect(TopLeftX, TopLeftY, el.range, el.range);
                     this.ctx_4.stroke();
              })
@@ -175,13 +201,12 @@ const myGameArea = {
                 this.buttons.showTurretRange.innerHTML = "Show Tower Range";
             }
         }
- 
     },
     createTurretImg: function (e,  turret) {
         let imageTurret = document.createElement("img");
         let border = document.createElement("div");
         border.style.position = "absolute";
-        border.style.border = "1px solid red";
+        border.style.border = "2px solid red";
         border.style.padding = turret.range/2 + "px";
         border.style.zIndex = 10;
         border.id = border;
@@ -213,6 +238,12 @@ const myGameArea = {
             document.getElementById(imageTurret).remove();
             document.getElementById(border).remove();
             myGameArea.drawTurret();
+            if(myGameArea.clickShowAndHide != undefined){
+                myGameArea.clickShowAndHide = 1;
+                myGameArea.showRange();
+                myGameArea.clickShowAndHide = undefined;
+                myGameArea.showRange();
+            }
         }
         function buildTurret(e) {
             //sprawdzanie czy mozna zbudować turret

@@ -267,7 +267,7 @@ const myGameArea = {
                         clickX + 2 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
                         clickX + 1 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
                         clickX + 1 == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
-                        clickX == Math.floor(el.x / numberOfquad) && clickY + 2 == Math.floor(el.y / numberOfquad) ||
+                     //   clickX == Math.floor(el.x / numberOfquad) && clickY + 2 == Math.floor(el.y / numberOfquad) ||
                         clickX - 1 == Math.floor(el.x / numberOfquad) && clickY + 1 == Math.floor(el.y / numberOfquad) ||
                         clickX - 1 == Math.floor(el.x / numberOfquad) && clickY == Math.floor(el.y / numberOfquad) ||
                         clickX - 1 == Math.floor(el.x / numberOfquad) && clickY - 2 == Math.floor(el.y / numberOfquad) ||
@@ -326,8 +326,8 @@ const myGameArea = {
                     clickY + 1 < myGameArea.number.height && clickY + 2 < myGameArea.number.height) {
                     //moge tutaj budowac co chce
                     agreePath = true;
-                    console.log(clickX + "clicklem")
-                    console.log(elem.x/40)
+                 //   console.log(clickX + "clicklem")
+                 //   console.log(elem.x/40)
                 } else {
                     //jesli wszystko wyzej sie popsuje to tez nie zezwalam na budowe
                     agreePath = false;
@@ -338,7 +338,7 @@ const myGameArea = {
                 console.log("moge budować")
             } else {
                 console.log("nie moge ")
-                window.alert("Nie można tutaj budować!")
+              //  window.alert("Nie można tutaj budować!")
             }
         }
     },

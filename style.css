@@ -21,3 +21,11 @@
     position: absolute;
     z-index:2;
 }
+#canvas3{
+    position: absolute;
+    z-index: 3;
+}
+#canvas4{
+    position:absolute;
+    z-index:4;
+}

@@ -1,14 +1,17 @@
 const myGameArea = {
-    canvas: document.getElementById("canvas"),
+    canvas: document.getElementById("canvas"), // mapa
     ctx: undefined,
-    canvas_2: document.getElementById("canvas2"),
+    canvas_2: document.getElementById("canvas2"), // potworki
     ctx_2: undefined,
-    canvas_3: document.getElementById("canvas3"),
+    canvas_3: document.getElementById("canvas3"), // wieze
     ctx_3: undefined,
+    canvas_4: document.getElementById("canvas4"), // zasieg wiezy
+    ctx_4:undefined,
     oneBox: 40,
     buttons: {
         play: document.getElementById("buttonPlay"),
         turretOneButton: document.getElementById("wiezaImg"),
+        showTurretRange:document.getElementById("showTowerRange"),
     },
     map: document.getElementById("map"),
     castle: {
@@ -59,6 +62,7 @@ const myGameArea = {
     },
     interval: undefined,
     lvl: 10,
+    clickShowAndHide:undefined,// zmienna do pokazywania i chowania zasiegu wiezy
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
@@ -73,6 +77,9 @@ const myGameArea = {
         this.ctx_3 = this.canvas_3.getContext("2d");
         this.canvas_3.height = 600;
         this.canvas_3.width = 800;
+        this.ctx_4 = this.canvas_4.getContext("2d");
+        this.canvas_4.height = 600;
+        this.canvas_4.width = 800;
         // obliczanie sciezki
         for (let i = 0; i < 4; i++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
@@ -142,26 +149,61 @@ const myGameArea = {
         this.buttons.turretOneButton.addEventListener("click", (e) => {
             this.createTurretImg(e,  this.turretOne);
         })
+        this.buttons.showTurretRange.addEventListener("click", ()=>{
+       
+             this.showRange();
+        })
+    },
+    showRange: function(){
+     
+        if(this.turretsArray.length != 0){
+            if(  this.clickShowAndHide  == undefined ){
+                this.turretsArray.forEach(el =>{
+                    let TopLeftX = el.x + this.oneBox - el.range / 2;
+                    let TopLeftY = el.y + this.oneBox - el.range / 2;
+                    this.ctx_4.beginPath();
+                    this.ctx_4.strokeStyle = "red";
+                    this.ctx_4.rect(TopLeftX, TopLeftY, el.range, el.range);
+                    this.ctx_4.stroke();
+             })
+             this.clickShowAndHide = 1;
+             this.buttons.showTurretRange.innerHTML = "Hide Tower Range";
+            }else{
+                console.log("xd robi sie ? ")
+                this.ctx_4.clearRect(0, 0, this.canvas_4.width, this.canvas_4.height);
+                this.clickShowAndHide = undefined;
+                this.buttons.showTurretRange.innerHTML = "Show Tower Range";
+            }
+        }
+ 
     },
     createTurretImg: function (e,  turret) {
         let imageTurret = document.createElement("img");
+        let border = document.createElement("div");
+        border.style.position = "absolute";
+        border.style.border = "1px solid red";
+        border.style.padding = turret.range/2 + "px";
+        border.style.zIndex = 10;
+        border.id = border;
         imageTurret.src = turret.img.src;
+        imageTurret.style.zIndex = 9;
         imageTurret.id = imageTurret;
         imageTurret.style.position = "absolute";
         imageTurret.style.left = e.pageX + "px";
         imageTurret.style.top = e.pageY + "px";
+        border.style.left = e.pageX+40 - turret.range/2  + "px";
+        border.style.top = e.pageY+40- turret.range/2  + "px";
         let castlePositionY = this.castle.y / this.oneBox;
         let castlePositionX = this.castle.x;
-        this.map.append(imageTurret);
+        this.map.append(imageTurret,border);
         this.map.addEventListener("mousemove", position)
         this.map.addEventListener("click", buildTurret)
-
         function position(e) {
             imageTurret.style.left = e.pageX + "px";
             imageTurret.style.top = e.pageY + "px";
-         //   imageTurret.style.padding = e.pageX + 40 - turret.range/2 + turret.range + "px";
+            border.style.left = e.pageX+40 - turret.range/2  + "px";
+            border.style.top = e.pageY+40- turret.range/2  + "px";
         }
-
         function removeAndBuild(x, y) {
             //index dla wiezy bedzie oznaczal ile dmg bedzie zadawal stworom 
             // a life szybkostrzelnosc
@@ -169,9 +211,9 @@ const myGameArea = {
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", buildTurret);
             document.getElementById(imageTurret).remove();
+            document.getElementById(border).remove();
             myGameArea.drawTurret();
         }
-
         function buildTurret(e) {
             //sprawdzanie czy mozna zbudować turret
             let agreePath = false;

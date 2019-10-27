@@ -371,22 +371,14 @@ const myGameArea = {
                             let BottomRightY = TopRightY + el.range;
                             let BottomLeftX = BottomRightX - el.range;
                             let BottomLeftY = BottomRightY;
-                            this.ctx_3.beginPath();
-                            this.ctx_3.rect(TopLeftX, TopLeftY, el.range, el.range)
-                            this.ctx_3.stroke();
-                            //   let range = el.range/2;
-
-                            // console.log("początkowe X" + el.x)
-                            // console.log("początkowe Y" + el.y)
-
-                            // console.log(TopLeftX)
-                            // console.log(TopLeftY)
-                            // console.log(BottomLeftX)
-                            // console.log(TopLeftX, TopLeftY, TopRightX, BottomRightY)
+                            // this.ctx_3.beginPath();
+                            // this.ctx_3.rect(TopLeftX, TopLeftY, el.range, el.range)
+                            // this.ctx_3.stroke();
+                     
                             if (element.x >= TopLeftX && element.x <= TopRightX && element.y >= TopLeftY && element.y <= BottomLeftY) {
                                 console.log("strzal")
-
                             }
+                        
                         })
                     }
                 } else {

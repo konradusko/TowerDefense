@@ -9,21 +9,40 @@
   
 </head>
 <body>
-    <div id="map">
-            <canvas id="canvas"></canvas>
-             <canvas id="canvas2"></canvas>
-             <canvas id="canvas3"></canvas>
-             <canvas id ="canvas4"></canvas>
-    </div>
+    <div class="container">
+            <div id="map">
+                    <canvas id="canvas"></canvas>
+                     <canvas id="canvas2"></canvas>
+                     <canvas id="canvas3"></canvas>
+                     <canvas id ="canvas4"></canvas>
+                     <canvas id="canvas5"></canvas>
+            </div>
+            <div id="menu" class="menu_container">
+                
+                <span class="span">Twoje monety: <b >101010</b></span>
+                <span class="span">Życie: <b>100</b></span>
+                <div class="your_turrets"> <span class="title"><b>Twoje wieże</b></span>
+                           <div class="container_turrets">
 
-        <button id="buttonPlay">Play</button> 
-        <button id="showTowerRange">Show Tower Range</button>
+                           </div>
+                </div>
+                <div>SKLEP Z WIEZAMI</div>
+                    <button id="buttonPlay">Play</button> 
+                    <button id="showTowerRange">Show Tower Range</button>
+                    <img id="wiezaImg" src="img/wieza.png" alt="Turret">
+                    <img id="wiezaImg2" src="img/wieza2.png" alt="Turret">
+                    <img id="wiezaImg3" src="img/wieza3.png" alt="Turret"> 
+            </div>
+   
+    </div>
+  
+   
+
+    
     <img  id="castleImg" class="none" src="img/castle.png" alt="castle">
     <img id="grassImg" class="none" src="img/grass.png" alt = "grass">
     <img id="enemyPathImg" class="none" src="img/enemyPath.png" alt="enemyPath">
-    <img id="wiezaImg" src="img/wieza.png" alt="Turret">
-    <img id="wiezaImg2" src="img/wieza2.png" alt="Turret">
-    <img id="wiezaImg3" src="img/wieza3.png" alt="Turret">
+ 
     <script src="main.js"></script>
 </body>
 </html>

@@ -49,10 +49,11 @@ const myGameArea = {
         height: 30,
         x: 5,
         y: 45,
-        img: document.getElementById("grassImg"), //testowo to i trawa dobra
         health: 30,
-        index: 0,
-        index_2: 1,
+        move: 0,
+        index: 1,
+        money: 0,
+        speed: 1000,
     },
     turretOne: {
         x: 0,
@@ -60,7 +61,7 @@ const myGameArea = {
         width: 40,
         height: 80,
         range: 300,
-        index: 2,
+        dmg: 2,
         speed: 2000,
         img: document.getElementById("wiezaImg"),
     },
@@ -70,7 +71,7 @@ const myGameArea = {
         width: 80,
         height: 80,
         range: 400,
-        index: 2,
+        dmg: 2,
         speed: 2,
         img: document.getElementById("wiezaImg2"),
     },
@@ -80,7 +81,7 @@ const myGameArea = {
         width: 80,
         height: 120,
         range: 500,
-        index: 2,
+        dmg: 2,
         speed: 2,
         img: document.getElementById("wiezaImg3"),
     },
@@ -93,6 +94,8 @@ const myGameArea = {
     enemyArray: [], //dla potworków
     turretsArray: [],
     enemyInRangeArray: [],
+    money: 99999999999999999,
+    numberOfEnemy: 15, //ile potworow ma sie pojawic // zalezne od poziomu
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -170,12 +173,11 @@ const myGameArea = {
             this.drawElement(el.width, el.height, el.img, el.x, el.y); //rysowanie sciezki
         });
         this.drawElement(this.castle.width, this.castle.height, this.castle.img, this.castle.x, this.castle.y); // i pan zamek
-
         this.buttonsEvents();
     },
     buttonsEvents: function () {
         this.buttons.play.addEventListener("click", () => {
-            this.createEnemy();
+            this.startGameLoop();
         });
         this.buttons.turretOneButton.addEventListener("click", (e) => {
             this.createTurretImg(e, this.turretOne);
@@ -227,7 +229,6 @@ const myGameArea = {
         background.id = background;
         background.style.left = e.pageX + "px";
         background.style.top = e.pageY + "px";
-
         border.style.position = "absolute";
         border.style.border = "2px solid red";
         border.style.padding = turret.range / 2 + "px";
@@ -235,7 +236,6 @@ const myGameArea = {
         border.id = border;
         border.style.left = e.pageX + 40 - turret.range / 2 + "px";
         border.style.top = e.pageY + 40 - turret.range / 2 + "px";
-
         imageTurret.src = turret.img.src;
         imageTurret.style.width = turret.width + "px";
         imageTurret.style.height = turret.height + "px";
@@ -244,8 +244,6 @@ const myGameArea = {
         imageTurret.style.position = "absolute";
         imageTurret.style.left = e.pageX + this.oneBox / 2 + "px";
         imageTurret.style.top = e.pageY + this.oneBox / 2 + "px";
-
-
         let castlePositionY = this.castle.y / this.oneBox;
         let castlePositionX = this.castle.x;
         let castleWidth = this.castle.width / this.oneBox - 1;
@@ -254,6 +252,7 @@ const myGameArea = {
         this.map.addEventListener("mousemove", position)
         this.clickShowAndHide = 1;
         this.showRange();
+
         function position(e) {
             imageTurret.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
             imageTurret.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
@@ -275,18 +274,18 @@ const myGameArea = {
         function removeAndBuild(e) {
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
-            myGameArea.createElement(turret.width, turret.height, x, y, turret.img, myGameArea.turretsArray, turret.speed, turret.index, turret.range);
+            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
             document.getElementById(imageTurret).remove();
             document.getElementById(border).remove();
             document.getElementById(background).remove();
-            myGameArea.drawTurret();
+             myGameArea.ctx_3.drawImage(turret.img, x, y, turret.width, turret.height)
             console.log(saveMemory)
             if (saveMemory == undefined) {
                 myGameArea.clickShowAndHide = 1;
                 myGameArea.showRange();
-            }else{
+            } else {
                 myGameArea.clickShowAndHide = undefined;
                 myGameArea.showRange();
             }
@@ -338,85 +337,48 @@ const myGameArea = {
             return bol;
         }
     },
-    drawTurret: function () {
-        //rysowanie wiez z arrayu
-        this.ctx_3.clearRect(0, 0, this.canvas_3.width, this.canvas_3.height)
-        console.log(this.turretsArray)
-        this.turretsArray.forEach(e => {
-            this.ctx_3.drawImage(e.img, e.x, e.y, e.width, e.height);
-        });
-    },
-    createEnemy: function () {
-        let poziom = 15; // "poziom" ile potworow ma sie wygenerowacm bedzie to zalezne od poziomu
-        this.enemyArray = []; //zawsze zeruje array
-        for (let i = 0; i < poziom; i++) {
-            //tworzenie potworków i dodawanie ich do arraya 
-            //range dla elementow to index
-            this.createElement(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.img, this.enemyArray, this.enemyOne.health, this.enemyOne.index, this.enemyOne.index_2);
+    // drawTurret: function () {
+    //     //rysowanie wiez z arrayu
+    //     this.ctx_3.clearRect(0, 0, this.canvas_3.width, this.canvas_3.height)
+    //     console.log(this.turretsArray)
+    //     this.turretsArray.forEach(e => {
+    //         this.ctx_3.drawImage(e.img, e.x, e.y, e.width, e.height);
+    //     });
+    // },
+    startGameLoop: function () {
+        for (let i = 0; i < this.numberOfEnemy; i++) {
+            //   createEnemy:function(width,height,x,y,health, index,move,money, speed,path)
+            this.createEnemy(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.health,
+                this.enemyOne.index, this.enemyOne.move, this.enemyOne.money, this.enemyOne.speed, this.enemyArray);
             this.enemyOne.x = this.enemyOne.x - this.oneBox / 2; // kazdy kolejny jest odsuniety od siebie
-            this.enemyOne.index_2 = this.enemyOne.index_2 + 1;
+            this.enemyOne.index = this.enemyOne.index + 1;
         }
         //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
-            this.engine();
-        }, 1000); // predkosc poruszania sie bestii
-        //    setInterval(() => {
-        //     this.turretsArray.forEach(el => {
-        //         let TopLeftX = el.x + this.oneBox - el.range / 2;
-        //         let TopLeftY = el.y + this.oneBox - el.range / 2;
-        //         this.enemyArray.forEach(element => {
-        //             if (element.x >= TopLeftX && element.x <= TopLeftX + el.range && element.y >= TopLeftY && element.y <= TopLeftY + el.range) {
-        //                 setTimeout(() =>{
-        //     this.animateShoot(element,el)
-        //                 },1000)
-        //             }
-        //         });
-        //     });
-        //    }, 1000);
-
-
+            this.enemyMove();
+        }, 200); // predkosc poruszania sie bestii
     },
-    engine: function () {
-        let xd = 0;
+    enemyMove: function () {
+
         if (this.enemyArray.length != 0) {
             this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height) // czysci nam mape z potworków
             this.enemyArray.forEach(element => {
                 // jesli droga przebyta przez potworka jest mniejsza od drogi to maszeruja 
-                if (element.index < this.enemypathArray.length) {
+                if (element.move < this.enemypathArray.length) {
                     //rysowanie i przemieszczanie potworkami
-                    if (element.life > 0) {
                         if (element.x < this.enemypathArray[0].x) {
                             element.x = element.x + this.oneBox / 2;
                         } else {
-                            //  console.log(element.index)
-                            // this.turretsArray.forEach(el => {
-                            //     let TopLeftX = el.x + this.oneBox - el.range / 2;
-                            //     let TopLeftY = el.y + this.oneBox - el.range / 2;
-                            //     if (element.x >= TopLeftX && element.x <= TopLeftX + el.range && element.y >= TopLeftY && element.y <= TopLeftY + el.range) {
-                            //         if (xd < this.turretsArray.length) {
-                            //             element.life = element.life - 15;
-                            //                 this.animateShoot(element,el)
-                            //             console.log("strelaj sasha")
-                            //             xd = xd+1;
-                            //         } 
-                            //     }
-                            // })
-
-                            element.x = this.enemypathArray[element.index].x + 5;
-                            element.y = this.enemypathArray[element.index].y + 5;
+                            element.x = this.enemypathArray[element.move].x + 5;
+                            element.y = this.enemypathArray[element.move].y + 5;
                             this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
-                            element.index = element.index + 1;
+                            element.move = element.move + 1;
                         }
-                    } else {
-                        this.enemyArray.shift(element);
-                        // console.log(this.enemyArray);
-                        // console.log("zycia malo")
-                    }
                 } else {
                     // tutaj droga byla juz wieksza to potworek dotarl do zamku
                     this.enemyArray.shift(element);
-                    // console.log(this.enemyArray)
-                    // console.log("gameover")
+                     console.log(this.enemyArray)
+                     console.log("gameover")
                 }
             });
         } else {
@@ -427,36 +389,58 @@ const myGameArea = {
         ///////////////////////////////
 
     },
-    animateShoot: function (e, w) {
-        this.ctx_5.clearRect(0, 0, this.canvas_5.width, this.canvas_5.height)
-        let xd = 0;
-        console.log(e.x, e.y)
-        if (xd === 0) {
-            e.life = e.life - 10;
-            setTimeout(() => {
-                this.ctx_5.beginPath();
-                this.ctx_5.moveTo(w.x + this.oneBox, w.y + this.oneBox);
-                this.ctx_5.strokeStyle = "#FF0000";
-                this.ctx_5.lineWidth = 5;
-                this.ctx_5.lineTo(e.x + 10, e.y + 10);
-                this.ctx_5.stroke();
+    // animateShoot: function (e, w) {
+    //     this.ctx_5.clearRect(0, 0, this.canvas_5.width, this.canvas_5.height)
+    //     let xd = 0;
+    //     console.log(e.x, e.y)
+    //     if (xd === 0) {
+    //         e.life = e.life - 10;
+    //         setTimeout(() => {
+    //             this.ctx_5.beginPath();
+    //             this.ctx_5.moveTo(w.x + this.oneBox, w.y + this.oneBox);
+    //             this.ctx_5.strokeStyle = "#FF0000";
+    //             this.ctx_5.lineWidth = 5;
+    //             this.ctx_5.lineTo(e.x + 10, e.y + 10);
+    //             this.ctx_5.stroke();
 
-            }, 500);
-            xd = 1;
-        }
+    //         }, 500);
+    //         xd = 1;
+    //     }
 
-        console.log(e)
+    //     console.log(e)
+    // },
+    createTurret: function (width, height, x, y, range, dmg, speed, img, path) {
+        let object = new Object();
+        object.width = width;
+        object.height = height;
+        object.x = x;
+        object.y = y;
+        object.range = range;
+        object.dmg = dmg;
+        object.speed = speed;
+        object.img = img;
+        path.push(object)
     },
-    createElement: function (width, height, x, y, img, path, life, index, range) {
+    createEnemy: function (width, height, x, y, health, index, move, money, speed, path) {
+        let object = new Object();
+        object.width = width;
+        object.height = height;
+        object.x = x;
+        object.y = y;
+        object.health = health;
+        object.index = index;
+        object.move = move;
+        object.money = money;
+        object.speed = speed;
+        path.push(object);
+    },
+    createElement: function (width, height, x, y, img, path) {
         let object = new Object();
         object.width = width;
         object.height = height;
         object.x = x;
         object.y = y;
         object.img = img;
-        object.life = life;
-        object.index = index;
-        object.range = range;
         path.push(object);
     },
     drawElement: function (width, height, background, x, y) {

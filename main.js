@@ -61,7 +61,7 @@ const myGameArea = {
         width: 40,
         height: 80,
         range: 300,
-        dmg: 1,
+        dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg"),
     },
@@ -71,7 +71,7 @@ const myGameArea = {
         width: 80,
         height: 80,
         range: 400,
-        dmg: 2,
+        dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg2"),
     },
@@ -81,7 +81,7 @@ const myGameArea = {
         width: 80,
         height: 120,
         range: 500,
-        dmg: 3,
+        dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg3"),
     },
@@ -400,29 +400,84 @@ const myGameArea = {
                 if (element.x >= TopLeftX && element.x <= TopLeftX + T.range &&
                     element.y >= TopLeftY && element.y <= TopLeftY + T.range) {
                         if(bol == true){
+                      
                         console.log("strzal")
-                        this.ctx_5.beginPath();
-                        this.ctx_5.moveTo(T.x + this.oneBox, T.y + this.oneBox);
-                        this.ctx_5.strokeStyle = "#FF0000";
-                        this.ctx_5.lineWidth = 5;
-                        this.ctx_5.lineTo(element.x + 10, element.y + 10);
-                        this.ctx_5.stroke();
+                        this.animateShoot(element,T);
+                      //  element.health = element.health- T.dmg;
+                     
                         bol= false;
+                        if(element.health <= 0){
+                            this.enemyArray.shift(element);
+                            this.ctx_2.clearRect(element.x, element.y, element.width, element.height);
+                         //   console.log(this.enemyArray)
+                        }
                     }
                 }
             })
         }
     },
     animateShoot: function (e, w) {
-        this.ctx_5.clearRect(0, 0, this.canvas_5.width, this.canvas_5.height)
-        // let xd = 0;
-        console.log(e.x, e.y)
-        this.ctx_5.beginPath();
-        this.ctx_5.moveTo(w.x + this.oneBox, w.y + this.oneBox);
-        this.ctx_5.strokeStyle = "#FF0000";
-        this.ctx_5.lineWidth = 5;
-        this.ctx_5.lineTo(e.x + 10, e.y + 10);
-        this.ctx_5.stroke();
+        //e potworek, w wieza
+        let test = e;
+        let object = new Object();
+        object.x = w.x;
+        object.y = w.y;
+        object.width= 15;
+        object.height= 15;
+        object.color = "red";
+        object.EndPointX = test.x-5;
+        object.EndPointaY = test.y-5
+        object.interval = setInterval(() =>{
+            console.log(e)
+              if (object.x == object.EndPointX && object.y == object.EndPointaY){
+                console.log("usuwa? ")
+         
+                clearInterval(object.interval)
+                delete object;
+                this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+               
+             }else{
+                this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+                if(object.x > object.EndPointX){
+                    object.x = object.x - 20;
+                }else if(object.x < object.EndPointX){
+                    object.x = object.x + 20;
+                } if(object.y > object.EndPointaY){
+                    object.y = object.y  -  20;
+                }else if(object.y < object.EndPointaY){
+                    object.y = object.y + 20;
+                }
+
+                
+                if(object.y > object.EndPointaY){
+                    object.y = object.y  -  20;
+                }else if(object.y < object.EndPointaY){
+                    object.y = object.y + 20;
+                }else if(object.x > object.EndPointX){
+                    object.x = object.x - 20;
+                }else if(object.x < object.EndPointX){
+                    object.x = object.x + 20;
+                }
+           
+           
+                this.ctx_5.fillStyle = object.color;
+                this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
+             }
+        }, 50)
+        // object.update = function(){
+  
+        // };
+      //  this.test.push(object);
+        console.log(object);
+        // this.ctx_5.clearRect(0, 0, this.canvas_5.width, this.canvas_5.height)
+        // // let xd = 0;
+        // console.log(e.x, e.y)
+        // this.ctx_5.beginPath();
+        // this.ctx_5.moveTo(w.x + this.oneBox, w.y + this.oneBox);
+        // this.ctx_5.strokeStyle = "#FF0000";
+        // this.ctx_5.lineWidth = 5;
+        // this.ctx_5.lineTo(e.x + 10, e.y + 10);
+        // this.ctx_5.stroke();
     },
     createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, interval) {
         let object = new Object();
@@ -468,25 +523,7 @@ const myGameArea = {
         this.background = background;
         this.ctx.beginPath();
         this.ctx.drawImage(this.background, this.x, this.y, this.width, this.height);
-        //       this.ctx.fillRect(this.x,this.y,this.width,this.height);
     },
 
 }
 myGameArea.start();
-document.getElementById("xd").addEventListener("click", () => {
-
-    //     myGameArea.turretsArray.forEach(el =>{
-    //         clearInterval(myGameArea.interval_2);
-    //     })
-    // setTimeout(() => {
-    //     myGameArea.startShootLoop();
-    //     console.log("start new one")
-    // }, 4000);
-    let test = myGameArea.interval_2 + 1;
-    console.log(test);
-    for (let i = 0; i <= test; i++) {
-        clearInterval(myGameArea.interval_2);
-        console.log("powinno wyczyscic")
-    }
-
-})

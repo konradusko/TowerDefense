@@ -64,6 +64,7 @@ const myGameArea = {
         dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg"),
+        color_ammo: "red",
     },
     turretTwo: {
         x: 0,
@@ -74,6 +75,7 @@ const myGameArea = {
         dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg2"),
+        color_ammo: "blue",
     },
     turretThree: {
         x: 0,
@@ -84,6 +86,7 @@ const myGameArea = {
         dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg3"),
+        color_ammo: "gray",
     },
     interval: undefined,
     interval_2: undefined,
@@ -279,7 +282,7 @@ const myGameArea = {
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let index = myGameArea.turretsArray.length + 1;
-            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index)
+            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index,turret.color_ammo)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
             document.getElementById(imageTurret).remove();
@@ -427,7 +430,7 @@ const myGameArea = {
         object.y = w.y;
         object.width = 15;
         object.height = 15;
-        object.color = "red";
+        object.color = w.ammo;
         object.EndPointX = e.x;
         object.EndPointaY = e.y;
         object.interval = setInterval(() => {
@@ -439,22 +442,22 @@ const myGameArea = {
                 delete object;
             } else {
                 if (object.x > object.EndPointX) {
-                    object.x = Math.floor(object.x - Math.abs((object.x - object.EndPointX) / 2));
+                    object.x = Math.floor(object.x - Math.abs((object.x - object.EndPointX) / 3));
                 } else if (object.x < object.EndPointX) {
-                    object.x = Math.floor(object.x + Math.abs((object.x - object.EndPointX) / 2));
+                    object.x = Math.floor(object.x + Math.abs((object.x - object.EndPointX) / 3));
                 }
 
                 if (object.y > object.EndPointaY) {
-                    object.y = Math.floor(object.y - Math.abs((object.y - object.EndPointaY) / 2));
+                    object.y = Math.floor(object.y - Math.abs((object.y - object.EndPointaY) / 3));
                 } else if (object.y < object.EndPointaY) {
-                    object.y = Math.floor(object.y + Math.abs((object.y - object.EndPointaY) / 2));
+                    object.y = Math.floor(object.y + Math.abs((object.y - object.EndPointaY) / 3));
                 }
                 this.ctx_5.fillStyle = object.color;
                 this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
             }
         }, 50)
     },
-    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, interval) {
+    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index,ammo, interval) {
         let object = new Object();
         object.width = width;
         object.height = height;
@@ -466,6 +469,7 @@ const myGameArea = {
         object.img = img;
         object.interval = interval;
         object.index = index;
+        object.ammo = ammo;
         path.push(object)
     },
     createEnemy: function (width, height, x, y, health, index, move, money, speed, path) {

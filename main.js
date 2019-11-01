@@ -422,23 +422,22 @@ const myGameArea = {
     },
     animateShoot: function (e, w) {
         //e potworek, w wieza
-        let test = e;
         let object = new Object();
         object.x = w.x;
         object.y = w.y;
         object.width = 15;
         object.height = 15;
         object.color = "red";
-        object.EndPointX = test.x - 5;
-        object.EndPointaY = test.y - 5
+        object.EndPointX = e.x;
+        object.EndPointaY = e.y;
         object.interval = setInterval(() => {
-            // console.log(object.EndPointX, "end point X")
-            // console.log(object.EndPointaY, "end point Y")
-            // console.log(object.x,"x wiezy")
-            // console.log(object.y , "y point wiezy")
             this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-            if (object.x != object.EndPointX && object.y != object.EndPointaY) {
-
+            if (Math.floor(object.x / this.oneBox) == Math.floor(object.EndPointX / this.oneBox) &&
+                Math.floor(object.y / this.oneBox) == Math.floor(object.EndPointaY / this.oneBox)) {
+                this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+                clearInterval(object.interval)
+                delete object;
+            } else {
                 if (object.x > object.EndPointX) {
                     object.x = Math.floor(object.x - Math.abs((object.x - object.EndPointX) / 2));
                 } else if (object.x < object.EndPointX) {
@@ -450,98 +449,10 @@ const myGameArea = {
                 } else if (object.y < object.EndPointaY) {
                     object.y = Math.floor(object.y + Math.abs((object.y - object.EndPointaY) / 2));
                 }
-                console.log(Math.floor(object.x), "X")
-                console.log(object.EndPointX)
-
-                console.log(Math.floor(object.y), "Y")
-                console.log(object.EndPointaY)
-                console.log("////////")
-                // console.log(object.y  +  Math.abs((object.y - object.EndPointaY)/2))
-                // console.log(Math.floor(object.y  +  Math.abs((object.y - object.EndPointaY)/2)))
-                
                 this.ctx_5.fillStyle = object.color;
                 this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
-            } else {
-        //
-        console.log("usuwa? ")
-        this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-        clearInterval(object.interval)
-        delete object;
             }
         }, 50)
-        // console.log(e)
-        // console.log(w)
-        //     let test = e;
-        //     let test2 = w;
-        //     let object = new Object();
-        //     object.x = w.x;
-        //     object.y = w.y;
-        //     object.width= 15;
-        //     object.height= 15;
-        //     object.color = "red";
-        //     object.EndPointX = e.x-5;
-        //     object.EndPointY = e.y-5;
-        //     object.interval = setInterval(() =>{
-
-        //         if (object.x == object.EndPointX && object.y == object.EndPointaY){
-        //           console.log("usuwa? ")
-        //           clearInterval(object.interval)
-        //           delete object;
-        //           this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-
-        //        }else{
-        //           this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-        //           if(object.x > object.EndPointX){
-        //               object.x = object.x - 20;
-        //           }else if(object.x < object.EndPointX){
-        //               object.x = object.x + 20;
-        //           }
-        //           if(object.y > object.EndPointaY){
-        //               object.y = object.y  -  20;
-        //           }else if(object.y < object.EndPointaY){
-        //               object.y = object.y + 20;
-        //           }
-        //           this.ctx_5.fillStyle = object.color;
-        //           this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
-        //        }
-        //   }, 50)
-        ///////////////////////////////
-        // console.log(object.y);
-        // console.log(object.EndPointY)
-        //  console.log(object.y)
-        // console.log(object);
-        // console.log(object.x -(object.x -object.EndPointX)/2)
-        // console.log(  object.y = object.y -  (object.y -object.EndPointY)/2 )
-        //   object.interval = setInterval(() =>{
-
-        //       if (object.x == object.EndPointX && object.y == object.EndPointY){
-        //         console.log("usuwa? ")
-
-        //         clearInterval(object.interval)
-        //         delete object;
-        //         this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-
-        //      }else{
-        //         this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-        //         if(object.x > object.EndPointX){
-        //             object.x = object.x -(object.x -object.EndPointX)/2 ;
-        //         }else if(object.x < object.EndPointX){
-        //             object.x = object.x +(object.x -object.EndPointX)/2 
-        //         }
-
-        //         if(object.y > object.EndPointaY){
-        //             object.y = object.y -  (object.y -object.EndPointY)/2 
-        //         }else if(object.y < object.EndPointaY){
-        //             object.y = object.y +  (object.y -object.EndPointY)/2 
-        //         }
-
-
-        //         this.ctx_5.fillStyle = object.color;
-        //         this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
-        //      }
-        // }, 50)
-
-
     },
     createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, interval) {
         let object = new Object();

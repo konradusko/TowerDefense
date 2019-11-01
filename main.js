@@ -53,7 +53,7 @@ const myGameArea = {
         move: 0,
         index: 1,
         money: 0,
-        speed: 1000,
+        speed: 100,
     },
     turretOne: {
         x: 0,
@@ -196,12 +196,12 @@ const myGameArea = {
         if (this.turretsArray.length != 0) {
             if (this.clickShowAndHide == undefined) {
                 this.turretsArray.forEach(el => {
-                    let TopLeftX = el.x -this.oneBox/2 -el.range;
-                    let TopLeftY = el.y - this.oneBox/2 -el.range;
+                    let TopLeftX = el.x - this.oneBox / 2 - el.range;
+                    let TopLeftY = el.y - this.oneBox / 2 - el.range;
                     this.ctx_4.beginPath();
                     this.ctx_4.strokeStyle = "red";
                     this.ctx_4.lineWidth = 2;
-                    this.ctx_4.rect(TopLeftX, TopLeftY, el.width +this.oneBox +el.range*2 ,el.height+this.oneBox+el.range*2);
+                    this.ctx_4.rect(TopLeftX, TopLeftY, el.width + this.oneBox + el.range * 2, el.height + this.oneBox + el.range * 2);
                     this.ctx_4.stroke();
                 })
                 this.clickShowAndHide = 1;
@@ -231,15 +231,15 @@ const myGameArea = {
         background.style.top = e.pageY + "px";
         border.style.position = "absolute";
         border.style.border = "2px solid red";
-        border.style.paddingTop = turret.range +"px";
-        border.style.paddingBottom = turret.range + turret.height + this.oneBox +"px";
-        border.style.paddingLeft = turret.range +"px";
-        border.style.paddingRight = turret.range + turret.width + this.oneBox+"px";
+        border.style.paddingTop = turret.range + "px";
+        border.style.paddingBottom = turret.range + turret.height + this.oneBox + "px";
+        border.style.paddingLeft = turret.range + "px";
+        border.style.paddingRight = turret.range + turret.width + this.oneBox + "px";
         console.log(turret.range)
         border.style.zIndex = 10;
         border.id = border;
-        border.style.left = e.pageX  - turret.range  + "px";
-        border.style.top = e.pageY  - turret.range  + "px";
+        border.style.left = e.pageX - turret.range + "px";
+        border.style.top = e.pageY - turret.range + "px";
         imageTurret.src = turret.img.src;
         imageTurret.style.width = turret.width + "px";
         imageTurret.style.height = turret.height + "px";
@@ -256,11 +256,12 @@ const myGameArea = {
         this.map.addEventListener("mousemove", position)
         this.clickShowAndHide = 1;
         this.showRange();
+
         function position(e) {
             imageTurret.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
             imageTurret.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
-            border.style.left = Math.floor(e.pageX / numberOfquad)*numberOfquad - turret.range  + "px";
-            border.style.top = Math.floor(e.pageY / numberOfquad)*numberOfquad  - turret.range  + "px";
+            border.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad - turret.range + "px";
+            border.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad - turret.range + "px";
             background.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + "px";
             background.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + "px";
             let bol = ifIcanBuildHereTurret(e);
@@ -354,7 +355,7 @@ const myGameArea = {
         //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
             this.enemyMove();
-        }, 1000); // predkosc poruszania sie bestii
+        }, 700); // predkosc poruszania sie bestii
         //   this.startShootLoop();
     },
     enemyMove: function () {
@@ -392,27 +393,27 @@ const myGameArea = {
         // console.log(x)
         x.interval = setInterval(() => {
             this.turretShoot(x);
-        }, 100)
+        }, x.speed)
     },
     turretShoot: function (T) {
         let bol = true;
-        let TopLeftX = T.x - this.oneBox/2 - T.range ;
-        let TopLeftY = T.y -this.oneBox/2 - T.range ;
-        if(this.enemyArray != 0){
+        let TopLeftX = T.x - this.oneBox / 2 - T.range;
+        let TopLeftY = T.y - this.oneBox / 2 - T.range;
+        if (this.enemyArray != 0) {
             this.enemyArray.forEach(element => { // robaczki
-                if (element.x >= TopLeftX && element.x <= TopLeftX + T.width+this.oneBox + T.range*2 &&
-                    element.y >= TopLeftY && element.y <= TopLeftY + T.height +this.oneBox+ T.range*2) {
-                        if(bol == true){
-                    //  console.log(T)
+                if (element.x >= TopLeftX && element.x <= TopLeftX + T.width + this.oneBox + T.range * 2 &&
+                    element.y >= TopLeftY && element.y <= TopLeftY + T.height + this.oneBox + T.range * 2) {
+                    if (bol == true) {
+                        //  console.log(T)
                         console.log("strzal")
-                       // this.animateShoot(element,T);
-                      //  element.health = element.health- T.dmg;
-                     
-                        bol= false;
-                        if(element.health <= 0){
+                        this.animateShoot(element, T);
+                        //  element.health = element.health- T.dmg;
+
+                        bol = false;
+                        if (element.health <= 0) {
                             this.enemyArray.shift(element);
                             this.ctx_2.clearRect(element.x, element.y, element.width, element.height);
-                         //   console.log(this.enemyArray)
+                            //   console.log(this.enemyArray)
                         }
                     }
                 }
@@ -421,18 +422,90 @@ const myGameArea = {
     },
     animateShoot: function (e, w) {
         //e potworek, w wieza
-        // console.log(e)
-        // console.log(w)
         let test = e;
-        let test2 = w;
         let object = new Object();
         object.x = w.x;
         object.y = w.y;
-        object.width= 15;
-        object.height= 15;
+        object.width = 15;
+        object.height = 15;
         object.color = "red";
-        object.EndPointX = e.x-5;
-        object.EndPointY = e.y-5;
+        object.EndPointX = test.x - 5;
+        object.EndPointaY = test.y - 5
+        object.interval = setInterval(() => {
+            // console.log(object.EndPointX, "end point X")
+            // console.log(object.EndPointaY, "end point Y")
+            // console.log(object.x,"x wiezy")
+            // console.log(object.y , "y point wiezy")
+            this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+            if (object.x != object.EndPointX && object.y != object.EndPointaY) {
+
+                if (object.x > object.EndPointX) {
+                    object.x = Math.floor(object.x - Math.abs((object.x - object.EndPointX) / 2));
+                } else if (object.x < object.EndPointX) {
+                    object.x = Math.floor(object.x + Math.abs((object.x - object.EndPointX) / 2));
+                }
+
+                if (object.y > object.EndPointaY) {
+                    object.y = Math.floor(object.y - Math.abs((object.y - object.EndPointaY) / 2));
+                } else if (object.y < object.EndPointaY) {
+                    object.y = Math.floor(object.y + Math.abs((object.y - object.EndPointaY) / 2));
+                }
+                console.log(Math.floor(object.x), "X")
+                console.log(object.EndPointX)
+
+                console.log(Math.floor(object.y), "Y")
+                console.log(object.EndPointaY)
+                console.log("////////")
+                // console.log(object.y  +  Math.abs((object.y - object.EndPointaY)/2))
+                // console.log(Math.floor(object.y  +  Math.abs((object.y - object.EndPointaY)/2)))
+                
+                this.ctx_5.fillStyle = object.color;
+                this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
+            } else {
+        //
+        console.log("usuwa? ")
+        this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+        clearInterval(object.interval)
+        delete object;
+            }
+        }, 50)
+        // console.log(e)
+        // console.log(w)
+        //     let test = e;
+        //     let test2 = w;
+        //     let object = new Object();
+        //     object.x = w.x;
+        //     object.y = w.y;
+        //     object.width= 15;
+        //     object.height= 15;
+        //     object.color = "red";
+        //     object.EndPointX = e.x-5;
+        //     object.EndPointY = e.y-5;
+        //     object.interval = setInterval(() =>{
+
+        //         if (object.x == object.EndPointX && object.y == object.EndPointaY){
+        //           console.log("usuwa? ")
+        //           clearInterval(object.interval)
+        //           delete object;
+        //           this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+
+        //        }else{
+        //           this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+        //           if(object.x > object.EndPointX){
+        //               object.x = object.x - 20;
+        //           }else if(object.x < object.EndPointX){
+        //               object.x = object.x + 20;
+        //           }
+        //           if(object.y > object.EndPointaY){
+        //               object.y = object.y  -  20;
+        //           }else if(object.y < object.EndPointaY){
+        //               object.y = object.y + 20;
+        //           }
+        //           this.ctx_5.fillStyle = object.color;
+        //           this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
+        //        }
+        //   }, 50)
+        ///////////////////////////////
         // console.log(object.y);
         // console.log(object.EndPointY)
         //  console.log(object.y)
@@ -440,14 +513,14 @@ const myGameArea = {
         // console.log(object.x -(object.x -object.EndPointX)/2)
         // console.log(  object.y = object.y -  (object.y -object.EndPointY)/2 )
         //   object.interval = setInterval(() =>{
-         
+
         //       if (object.x == object.EndPointX && object.y == object.EndPointY){
         //         console.log("usuwa? ")
-         
+
         //         clearInterval(object.interval)
         //         delete object;
         //         this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-               
+
         //      }else{
         //         this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
         //         if(object.x > object.EndPointX){
@@ -461,49 +534,13 @@ const myGameArea = {
         //         }else if(object.y < object.EndPointaY){
         //             object.y = object.y +  (object.y -object.EndPointY)/2 
         //         }
-           
-           
+
+
         //         this.ctx_5.fillStyle = object.color;
         //         this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
         //      }
         // }, 50)
-        object.interval = setInterval(() =>{
-         
-              if (object.x == object.EndPointX && object.y == object.EndPointaY){
-                console.log("usuwa? ")
-         
-                clearInterval(object.interval)
-                delete object;
-                this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-               
-             }else{
-                this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
-                if(object.x > object.EndPointX){
-                    object.x = object.x - 20;
-                }else if(object.x < object.EndPointX){
-                    object.x = object.x + 20;
-                }else if(object.y > object.EndPointaY){
-                    object.y = object.y  -  20;
-                }else if(object.y < object.EndPointaY){
-                    object.y = object.y + 20;
-                }
 
-
-                if(object.y > object.EndPointaY){
-                    object.y = object.y  -  20;
-                }else if(object.y < object.EndPointaY){
-                    object.y = object.y + 20;
-                }else if(object.x > object.EndPointX){
-                    object.x = object.x - 20;
-                }else if(object.x < object.EndPointX){
-                    object.x = object.x + 20;
-                }
-           
-           
-                this.ctx_5.fillStyle = object.color;
-                this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
-             }
-        }, 50)
 
     },
     createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, interval) {

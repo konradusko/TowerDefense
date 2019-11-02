@@ -9,6 +9,8 @@ const myGameArea = {
     ctx_4: undefined,
     canvas_5: document.getElementById("canvas5"), // animacja strzalu wiezy
     ctx_5: undefined,
+    canvas_6: document.getElementById("canvas6"), // tekst
+    ctx_6: undefined,
     oneBox: 40,
     buttons: {
         play: document.getElementById("buttonPlay"),
@@ -49,11 +51,13 @@ const myGameArea = {
         height: 30,
         x: 5,
         y: 45,
-        health: 35,
+        health: 100,
         move: 0,
         index: 1,
         money: 0,
-        speed: 100,
+        speed: 1200,
+        color: "black",
+        dmg: 5,
     },
     turretOne: {
         x: 0,
@@ -61,10 +65,11 @@ const myGameArea = {
         width: 40,
         height: 40,
         range: 40,
-        dmg: 30,
-        speed: 2000,
+        dmg: 35,
+        speed: 1200,
         img: document.getElementById("wiezaImg"),
         color_ammo: "red",
+        price: 50,
     },
     turretTwo: {
         x: 0,
@@ -76,6 +81,7 @@ const myGameArea = {
         speed: 2000,
         img: document.getElementById("wiezaImg2"),
         color_ammo: "blue",
+        price: 150,
     },
     turretThree: {
         x: 0,
@@ -87,10 +93,11 @@ const myGameArea = {
         speed: 2000,
         img: document.getElementById("wiezaImg3"),
         color_ammo: "purple",
+        price: 250,
     },
     interval: undefined,
     interval_2: undefined,
-    lvl: 10,
+    lvl: 1,
     clickShowAndHide: undefined, // zmienna do pokazywania i chowania zasiegu wiezy
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
@@ -98,7 +105,7 @@ const myGameArea = {
     turretsArray: [],
     enemyInRangeArray: [],
     money: 99999999999999999,
-    numberOfEnemy: 15, //ile potworow ma sie pojawic // zalezne od poziomu
+    numberOfEnemy: 5, //ile potworow ma sie pojawic // zalezne od poziomu
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -115,6 +122,9 @@ const myGameArea = {
         this.ctx_5 = this.canvas_5.getContext("2d");
         this.canvas_5.height = 600;
         this.canvas_5.width = 800;
+        this.ctx_6 = this.canvas_6.getContext("2d");
+        this.canvas_6.height = 600;
+        this.canvas_6.width = 800;
         // obliczanie sciezki
         for (let i = 0; i < 4; i++) {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
@@ -282,7 +292,7 @@ const myGameArea = {
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let index = myGameArea.turretsArray.length + 1;
-            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo)
+            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
             document.getElementById(imageTurret).remove();
@@ -347,73 +357,110 @@ const myGameArea = {
             return bol;
         }
     },
+    stats: function () {
+        switch (this.lvl) {
+            case 2:
+                this.numberOfEnemy = this.numberOfEnemy + 2;
+                this.enemyOne.color = "Brown";
+                this.enemyOne.speed = this.enemyOne.speed - 50; // balans ?
+                this.enemyOne.money = this.enemyOne.money + 5;
+                this.enemyOne.x = 5;
+                this.enemyOne.move = 0;
+                this.enemyOne.index = 1;
+                this.enemyOne.health = this.enemyOne.health + 2;
+                break;
+        }
+        this.startGameLoop();
+    },
     startGameLoop: function () {
         for (let i = 0; i < this.numberOfEnemy; i++) {
-            //   createEnemy:function(width,height,x,y,health, index,move,money, speed,path)
             this.createEnemy(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.health,
-                this.enemyOne.index, this.enemyOne.move, this.enemyOne.money, this.enemyOne.speed, this.enemyArray);
-            this.enemyOne.x = this.enemyOne.x - this.oneBox/2; // kazdy kolejny jest odsuniety od siebie
+                this.enemyOne.index, this.enemyOne.move, this.enemyOne.money, this.enemyOne.speed, this.enemyOne.color, this.enemyOne.dmg, this.enemyArray);
+            this.enemyOne.x = this.enemyOne.x - this.oneBox / 2; // kazdy kolejny jest odsuniety od siebie
             this.enemyOne.index = this.enemyOne.index + 1;
         }
+        console.log(this.enemyArray);
         //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
             this.enemyMove();
-        }, 500); // predkosc poruszania sie bestii
-        //   this.startShootLoop();
+        }, this.enemyOne.speed); // predkosc poruszania sie bestii
     },
     enemyMove: function () {
         if (this.enemyArray.length != 0) {
-            //this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height) // czysci nam mape z potworków
-            this.enemyArray.forEach(element => {
+            this.enemyArray.forEach(enemy => {
                 // jesli droga przebyta przez potworka jest mniejsza od drogi to maszeruja 
-                if (element.move < this.enemypathArray.length) {
+                if (enemy.move < this.enemypathArray.length) {
                     //rysowanie i przemieszczanie potworkami
                     //jezeli jeszcze ich nie ma na mapie 
-                    if (element.x < this.enemypathArray[0].x) {
-                        element.x = element.x + this.oneBox / 2;
+                    if (enemy.x < this.enemypathArray[0].x) {
+                        enemy.x = enemy.x + this.oneBox / 2;
                     } else {
-                        element.x = this.enemypathArray[element.move].x + 5;
-                        element.y = this.enemypathArray[element.move].y + 5;
-                      // this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
-                        element.move = element.move + 1;
+                        enemy.x = this.enemypathArray[enemy.move].x + 5;
+                        enemy.y = this.enemypathArray[enemy.move].y + 5;
+                        enemy.move = enemy.move + 1;
                         this.drawEnemy();
                     }
-                } else {
-                    // tutaj droga byla juz wieksza to potworek dotarl do zamku
+                } else if (enemy.move == this.enemypathArray.length) {
+                    //potworek dotarl do zamku
+                    this.castle.health = this.castle.health - enemy.dmg;
+                    if (this.castle.health <= 0) {
+                        //jesli zamek ma 0 hp to koniec zabawy
+                        window.alert("gameover");
+                    }
+                    this.enemyArray.shift(enemy);
                     this.drawEnemy();
-                    this.enemyArray.shift(element);
-                    console.log(this.enemyArray)
-                    console.log("gameover")
+          
                 }
             });
         } else {
             // nie ma juz zadnych potworków to zeruje interval
             this.drawEnemy();
             clearInterval(this.interval);
-            console.log("zero i bedzie nowa gra")
-        }
-        ///////////////////////////////
+            this.loop();
 
+        }
     },
-    startShootLoop: function (x) {
+    loop: function () {
+        this.lvl = this.lvl + 1;
+
+        function text(counter) {
+            if (counter > 0) {
+                counter--;
+                myGameArea.ctx_6.font = "40px Comic Sans MS";
+                myGameArea.ctx_6.fillStyle = "crimson";
+                myGameArea.ctx_6.textAlign = "center";
+                myGameArea.ctx_6.fillText("Następna fala złych kwadratów za " + counter, myGameArea.canvas_6.width / 2, myGameArea.canvas_6.height / 2);
+                setTimeout(() => {
+                    myGameArea.ctx_6.clearRect(0, 0, myGameArea.canvas_6.width, myGameArea.canvas_6.height);
+                    text(counter);
+                }, 1000);
+            } else {
+                myGameArea.stats();
+            }
+        }
+        text(10);
+    },
+    startShootLoop: function (Turret) {
         console.log(this.turretsArray);
-        x.interval = setInterval(() => {
-            this.turretShoot(x);
-        }, x.speed)
+        Turret.interval = setInterval(() => {
+            this.turretShoot(Turret);
+        }, Turret.speed)
     },
     turretShoot: function (T) {
         let bol = true;
         let TopLeftX = T.x - this.oneBox / 2 - T.range;
         let TopLeftY = T.y - this.oneBox / 2 - T.range;
         if (this.enemyArray != 0) {
-            this.enemyArray.forEach(element => { // robaczki
-                if (element.x >= TopLeftX && element.x <= TopLeftX + T.width + this.oneBox + T.range * 2 &&
-                    element.y >= TopLeftY && element.y <= TopLeftY + T.height + this.oneBox + T.range * 2) {
-                    if (bol == true) {
-                        console.log("strzal")
-                        this.animateShoot(element, T);
-                        bol = false;
+            this.enemyArray.forEach(enemy => { // robaczki
+                if (enemy.x >= TopLeftX && enemy.x <= TopLeftX + T.width + this.oneBox + T.range * 2 &&
+                    enemy.y >= TopLeftY && enemy.y <= TopLeftY + T.height + this.oneBox + T.range * 2) {
+                    if (enemy.x >= 0) { // czy enemy jeszcze nie jest poza mapa
+                        if (bol == true) {
+                            this.animateShoot(enemy, T);
+                            bol = false;
+                        }
                     }
+
                 }
             })
         }
@@ -421,16 +468,21 @@ const myGameArea = {
     drawEnemy: function () {
         this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height);
         if (this.enemyArray != 0) {
-            this.enemyArray.forEach(e => {
-                this.ctx_2.fillRect(e.x, e.y, e.width, e.height);
-                if (e.health <= this.enemyOne.health) {
-                    // 100% hp
-                } else if (e.health <= this.enemyOne.health - (this.enemyOne.health / 4)) {
-                    //75% hp
-                } else if (e.health <= this.enemyOne.health - (this.enemyOne.health / 2)) {
-                    //50% hp
-                } else if (e.health <= this.enemyOne.health / 4) {
+            this.enemyArray.forEach(enemy => {
+                this.ctx_2.fillStyle = enemy.color;
+                this.ctx_2.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                if (enemy.health <= this.enemyOne.health / 4) {
                     //25%
+                    this.ctx_2.fillStyle = "red";
+                    this.ctx_2.fillRect(enemy.x + 5, enemy.y + 5, 20, 20);
+                } else if (enemy.health <= this.enemyOne.health - (this.enemyOne.health / 2)) {
+                    //50% hp
+                    this.ctx_2.fillStyle = "red";
+                    this.ctx_2.fillRect(enemy.x + 5, enemy.y + 5, 15, 15);
+                } else if (enemy.health <= this.enemyOne.health - (this.enemyOne.health / 4)) {
+                    //75% hp
+                    this.ctx_2.fillStyle = "red";
+                    this.ctx_2.fillRect(enemy.x + 5, enemy.y + 5, 5, 5);
                 }
             })
         }
@@ -454,6 +506,7 @@ const myGameArea = {
                 e.health = e.health - w.dmg;
                 if (e.health <= 0) {
                     this.enemyArray.shift(e);
+                    this.money = this.money + e.money;
                 }
                 this.drawEnemy();
                 this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
@@ -477,7 +530,7 @@ const myGameArea = {
             }
         }, 20)
     },
-    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, interval) {
+    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, price, interval) {
         let object = new Object();
         object.width = width;
         object.height = height;
@@ -490,9 +543,10 @@ const myGameArea = {
         object.interval = interval;
         object.index = index;
         object.ammo = ammo;
+        object.price = price;
         path.push(object)
     },
-    createEnemy: function (width, height, x, y, health, index, move, money, speed, path) {
+    createEnemy: function (width, height, x, y, health, index, move, money, speed, color, dmg, path) {
         let object = new Object();
         object.width = width;
         object.height = height;
@@ -503,6 +557,8 @@ const myGameArea = {
         object.move = move;
         object.money = money;
         object.speed = speed;
+        object.color = color;
+        object.dmg = dmg;
         path.push(object);
     },
     createElement: function (width, height, x, y, img, path) {
@@ -525,4 +581,6 @@ const myGameArea = {
     },
 
 }
-myGameArea.start();
+window.addEventListener("load", () => {
+    myGameArea.start();
+})

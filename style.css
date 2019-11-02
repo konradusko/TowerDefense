@@ -34,6 +34,10 @@
     position: absolute;
     z-index: 5;
 }
+#canvas6{
+    position: absolute;
+    z-index: 6;
+}
 .menu_container{
     position: absolute;
     left:800px;

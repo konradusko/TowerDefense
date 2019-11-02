@@ -49,7 +49,7 @@ const myGameArea = {
         height: 30,
         x: 5,
         y: 45,
-        health: 30,
+        health: 35,
         move: 0,
         index: 1,
         money: 0,
@@ -86,7 +86,7 @@ const myGameArea = {
         dmg: 30,
         speed: 2000,
         img: document.getElementById("wiezaImg3"),
-        color_ammo: "gray",
+        color_ammo: "purple",
     },
     interval: undefined,
     interval_2: undefined,
@@ -282,7 +282,7 @@ const myGameArea = {
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let index = myGameArea.turretsArray.length + 1;
-            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index,turret.color_ammo)
+            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
             document.getElementById(imageTurret).remove();
@@ -352,32 +352,35 @@ const myGameArea = {
             //   createEnemy:function(width,height,x,y,health, index,move,money, speed,path)
             this.createEnemy(this.enemyOne.width, this.enemyOne.height, this.enemyOne.x, this.enemyOne.y, this.enemyOne.health,
                 this.enemyOne.index, this.enemyOne.move, this.enemyOne.money, this.enemyOne.speed, this.enemyArray);
-            this.enemyOne.x = this.enemyOne.x - this.oneBox / 2; // kazdy kolejny jest odsuniety od siebie
+            this.enemyOne.x = this.enemyOne.x - this.oneBox/2; // kazdy kolejny jest odsuniety od siebie
             this.enemyOne.index = this.enemyOne.index + 1;
         }
         //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
             this.enemyMove();
-        }, 700); // predkosc poruszania sie bestii
+        }, 500); // predkosc poruszania sie bestii
         //   this.startShootLoop();
     },
     enemyMove: function () {
         if (this.enemyArray.length != 0) {
-            this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height) // czysci nam mape z potworków
+            //this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height) // czysci nam mape z potworków
             this.enemyArray.forEach(element => {
                 // jesli droga przebyta przez potworka jest mniejsza od drogi to maszeruja 
                 if (element.move < this.enemypathArray.length) {
                     //rysowanie i przemieszczanie potworkami
+                    //jezeli jeszcze ich nie ma na mapie 
                     if (element.x < this.enemypathArray[0].x) {
                         element.x = element.x + this.oneBox / 2;
                     } else {
                         element.x = this.enemypathArray[element.move].x + 5;
                         element.y = this.enemypathArray[element.move].y + 5;
-                        this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
+                      // this.ctx_2.fillRect(element.x, element.y, element.width, element.height);
                         element.move = element.move + 1;
+                        this.drawEnemy();
                     }
                 } else {
                     // tutaj droga byla juz wieksza to potworek dotarl do zamku
+                    this.drawEnemy();
                     this.enemyArray.shift(element);
                     console.log(this.enemyArray)
                     console.log("gameover")
@@ -385,6 +388,7 @@ const myGameArea = {
             });
         } else {
             // nie ma juz zadnych potworków to zeruje interval
+            this.drawEnemy();
             clearInterval(this.interval);
             console.log("zero i bedzie nowa gra")
         }
@@ -393,7 +397,6 @@ const myGameArea = {
     },
     startShootLoop: function (x) {
         console.log(this.turretsArray);
-        // console.log(x)
         x.interval = setInterval(() => {
             this.turretShoot(x);
         }, x.speed)
@@ -407,18 +410,27 @@ const myGameArea = {
                 if (element.x >= TopLeftX && element.x <= TopLeftX + T.width + this.oneBox + T.range * 2 &&
                     element.y >= TopLeftY && element.y <= TopLeftY + T.height + this.oneBox + T.range * 2) {
                     if (bol == true) {
-                        //  console.log(T)
                         console.log("strzal")
                         this.animateShoot(element, T);
-                        //  element.health = element.health- T.dmg;
-
                         bol = false;
-                        if (element.health <= 0) {
-                            this.enemyArray.shift(element);
-                            this.ctx_2.clearRect(element.x, element.y, element.width, element.height);
-                            //   console.log(this.enemyArray)
-                        }
                     }
+                }
+            })
+        }
+    },
+    drawEnemy: function () {
+        this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height);
+        if (this.enemyArray != 0) {
+            this.enemyArray.forEach(e => {
+                this.ctx_2.fillRect(e.x, e.y, e.width, e.height);
+                if (e.health <= this.enemyOne.health) {
+                    // 100% hp
+                } else if (e.health <= this.enemyOne.health - (this.enemyOne.health / 4)) {
+                    //75% hp
+                } else if (e.health <= this.enemyOne.health - (this.enemyOne.health / 2)) {
+                    //50% hp
+                } else if (e.health <= this.enemyOne.health / 4) {
+                    //25%
                 }
             })
         }
@@ -435,12 +447,20 @@ const myGameArea = {
         object.EndPointaY = e.y;
         object.interval = setInterval(() => {
             this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
+            //jesli pocisk jest tam gdzie potworek zadaje mu dmg
+            // ssprawdza czy przypadkiem go nie przekrecilo i odswieza potworki
             if (Math.floor(object.x / this.oneBox) == Math.floor(object.EndPointX / this.oneBox) &&
                 Math.floor(object.y / this.oneBox) == Math.floor(object.EndPointaY / this.oneBox)) {
+                e.health = e.health - w.dmg;
+                if (e.health <= 0) {
+                    this.enemyArray.shift(e);
+                }
+                this.drawEnemy();
                 this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
                 clearInterval(object.interval)
                 delete object;
             } else {
+                // sprawdza jak daleko pocisk jest od potworka i o ile ma sie jeszcze przemiescic
                 if (object.x > object.EndPointX) {
                     object.x = Math.floor(object.x - Math.abs((object.x - object.EndPointX) / 3));
                 } else if (object.x < object.EndPointX) {
@@ -455,9 +475,9 @@ const myGameArea = {
                 this.ctx_5.fillStyle = object.color;
                 this.ctx_5.fillRect(object.x, object.y, object.width, object.height)
             }
-        }, 50)
+        }, 20)
     },
-    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index,ammo, interval) {
+    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, interval) {
         let object = new Object();
         object.width = width;
         object.height = height;

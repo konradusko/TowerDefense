@@ -5,8 +5,6 @@ const myGameArea = {
     ctx_2: undefined,
     canvas_3: document.getElementById("canvas3"), // wieze
     ctx_3: undefined,
-    // canvas_4: document.getElementById("canvas4"), // zasieg wiezy
-    // ctx_4: undefined,
     canvas_5: document.getElementById("canvas5"), // animacja strzalu wiezy
     ctx_5: undefined,
     canvas_6: document.getElementById("canvas6"), // tekst
@@ -36,6 +34,7 @@ const myGameArea = {
     PriceForBetterPower: document.getElementById("PriceForBetterPower"),
     PriceForBetterDmg: document.getElementById("PriceForBetterDmg"),
     MyPresentDmg: document.getElementById("MyPresentDmg"),
+    body:document.getElementById("body"),
     castle: {
         width: 160,
         height: 120,
@@ -130,7 +129,7 @@ const myGameArea = {
     enemyArray: [], //dla potworków
     turretsArray: [],
     enemyInRangeArray: [],
-    money: 9999,
+    money: 999999,
     numberOfEnemy: 5, //ile potworow ma sie pojawic // zalezne od poziomu
     colors: [],
     numberOfTurret: undefined,
@@ -226,13 +225,21 @@ const myGameArea = {
             this.startGameLoop();
         });
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            this.createTurretImg(e, this.turretOne);
+            if(this.money >= this.turretOne.price){
+                this.createTurretImg(e, this.turretOne);
+            }
+       
         });
         this.buttons.turretTwoButton.addEventListener("click", (e) => {
-            this.createTurretImg(e, this.turretTwo);
+            if(this.money >= this.turretTwo.price){
+                this.createTurretImg(e, this.turretTwo);
+            }
         });
         this.buttons.turretThreeButton.addEventListener("click", (e) => {
-            this.createTurretImg(e, this.turretThree);
+            if(this.money >= this.turretThree.price){
+                this.createTurretImg(e, this.turretThree);
+            }
+
         });
 
         this.buttons.lifeForCastle.addEventListener("click", () => {
@@ -292,9 +299,9 @@ const myGameArea = {
         this.buttons.add_RangeBTN.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
             if (this.money >= Turret.price * Turret.lvl_range && Turret.lvl_range < Turret.maxLvl) {
-                Turret.lvl_range = Turret.lvl_range + 1;
                 Turret.range = Turret.range + this.oneBox;
                 this.money = this.money - Turret.price * Turret.lvl_range;
+                Turret.lvl_range = Turret.lvl_range + 1;
                 this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range;
                 this.goldElement.innerHTML = this.money;
                 this.myPresentRange.innerHTML = Turret.lvl_range
@@ -306,11 +313,11 @@ const myGameArea = {
         this.buttons.add_DmgBTN.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
             if (this.money >= Turret.price * Turret.lvl_DMG && Turret.lvl_DMG < Turret.maxLvl) {
-                Turret.lvl_DMG = Turret.lvl_DMG + 1;
                 console.log(Turret)
                 Turret.dmg = Turret.dmg + 5; // o 5 zwiekszam dmg
                 console.log(this.turretsArray)
                 this.money = this.money - Turret.price * Turret.lvl_DMG;
+                Turret.lvl_DMG = Turret.lvl_DMG + 1;
                 this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG;
                 this.goldElement.innerHTML = this.money;
                 this.MyPresentDmg.innerHTML = Turret.lvl_DMG;
@@ -322,8 +329,6 @@ const myGameArea = {
         })
     },
     innerTurrets: function (Turret) {
-        console.log(Turret)
-        // const turretImg = document.getElementById("imgTurret");
         const myMaxRange = document.getElementById("myMaxRange");
         const myMaxDmg = document.getElementById("myMaxDmg");
         const turretContainer = document.getElementById("turret_list");
@@ -338,7 +343,6 @@ const myGameArea = {
             numberOfTurretsContainer.style.display = "block";
             this.buttons.previousTurret.style.display = "block";
             this.buttons.nextTurret.style.display = "block";
-            // let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
             if (Turret.lvl_DMG >= Turret.maxLvl) {
                 this.box_BetterDMG.style.display = "none";
             } else {
@@ -357,20 +361,21 @@ const myGameArea = {
             this.MyPresentDmg.innerHTML = Turret.lvl_DMG; //obecny poziom dmg
             myMaxDmg.innerHTML = Turret.maxLvl;
         }
-        // console.log(this.numberOfTurret)
     },
     createTurretImg: function (e, turret) {
         let numberOfquad = myGameArea.oneBox;
         let imageTurret = document.createElement("img");
         let border = document.createElement("div");
         let background = document.createElement("div");
+        const your_turrets_container =   document.getElementById("your_turrets");
+        const deleteTurret = document.getElementById("DeleteTurretFromMouse");
         background.style.position = "absolute";
         background.style.width = turret.width + this.oneBox + "px";
         background.style.height = turret.height + this.oneBox + "px";
         background.style.background = "green";
         background.style.zIndex = 8;
         background.style.opacity = .5;
-        background.id = background;
+        background.id = "background";
         background.style.left = e.pageX + "px";
         background.style.top = e.pageY + "px";
         border.style.position = "absolute";
@@ -379,16 +384,15 @@ const myGameArea = {
         border.style.paddingBottom = turret.range + turret.height + this.oneBox + "px";
         border.style.paddingLeft = turret.range + "px";
         border.style.paddingRight = turret.range + turret.width + this.oneBox + "px";
-        console.log(turret.range)
         border.style.zIndex = 10;
-        border.id = border;
+        border.id = "border";
         border.style.left = e.pageX - turret.range + "px";
         border.style.top = e.pageY - turret.range + "px";
         imageTurret.src = turret.img.src;
         imageTurret.style.width = turret.width + "px";
         imageTurret.style.height = turret.height + "px";
         imageTurret.style.zIndex = 9;
-        imageTurret.id = imageTurret;
+        imageTurret.id = "imageTurret";
         imageTurret.style.position = "absolute";
         imageTurret.style.left = e.pageX + this.oneBox / 2 + "px";
         imageTurret.style.top = e.pageY + this.oneBox / 2 + "px";
@@ -398,7 +402,10 @@ const myGameArea = {
         let castleHeight = this.castle.height / this.oneBox;
         this.map.append(imageTurret, border, background);
         this.map.addEventListener("mousemove", position)
-
+        your_turrets_container.style.display = "none";
+       deleteTurret.style.display = "block";
+       previousTurret.style.display = "none"
+       nextTurret.style.display = "none"
         function position(e) {
             imageTurret.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
             imageTurret.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
@@ -412,23 +419,45 @@ const myGameArea = {
                 myGameArea.map.addEventListener("click", removeAndBuild) //mozna budowac
             } else {
                 background.style.background = "red";
+                myGameArea.body.addEventListener("click", Remove )
                 myGameArea.map.removeEventListener("click", removeAndBuild); //nie mozna budowac
             }
         }
-
+        function Remove(e){
+       if(e.target.id == "DeleteTurretFromMouse"){
+        your_turrets_container.style.display = "block";
+        deleteTurret.style.display = "none";
+        previousTurret.style.display = "block"
+        nextTurret.style.display = "block"
+        document.getElementById("imageTurret").remove();
+        document.getElementById("border").remove();
+        document.getElementById("background").remove();
+        myGameArea.map.removeEventListener("mousemove", position);
+        myGameArea.map.removeEventListener("click", removeAndBuild);
+        myGameArea.body.removeEventListener("click", Remove )
+       }
+        }
         function removeAndBuild(e) {
+            console.log("dzieje sie")
+            your_turrets_container.style.display = "block";
+            deleteTurret.style.display = "none";
+            previousTurret.style.display = "block"
+            nextTurret.style.display = "block"
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let index = myGameArea.turretsArray.length + 1;
             myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price, turret.lvl_DMG, turret.lvl_range, turret.maxLvl)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
-            document.getElementById(imageTurret).remove();
-            document.getElementById(border).remove();
-            document.getElementById(background).remove();
+            myGameArea.body.removeEventListener("click", Remove )
+            document.getElementById("imageTurret").remove();
+            document.getElementById("border").remove();
+            document.getElementById("background").remove();
             myGameArea.ctx_3.drawImage(turret.img, x, y, turret.width, turret.height);
             console.log(myGameArea.turretsArray)
             myGameArea.startShootLoop(myGameArea.turretsArray.slice(-1)[0]);
+            myGameArea.money = myGameArea.money - turret.price;
+            myGameArea.goldElement.innerHTML =  myGameArea.money;
             //  console.log(saveMemory)
             if (myGameArea.turretsArray.length == 1) {
                 myGameArea.numberOfTurret = myGameArea.turretsArray.length;
@@ -655,7 +684,7 @@ const myGameArea = {
         text(6);
     },
     startShootLoop: function (Turret) {
-        console.log(this.turretsArray);
+       // console.log(this.turretsArray);
         Turret.interval = setInterval(() => {
             this.turretShoot(Turret);
         }, Turret.speed)

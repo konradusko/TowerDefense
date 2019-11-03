@@ -26,10 +26,6 @@
     position: absolute;
     z-index: 3;
 }
-#canvas4{
-    position:absolute;
-    z-index:4;
-}
 #canvas5{
     position: absolute;
     z-index: 5;

@@ -58,7 +58,7 @@
                                         <div class="div_line">
                                             <span class="turret_ability">Range:</span><span id="MyPresentRange" class="My_power"></span><span  class="colourLast"> /</span> <span class="colourLast" id="myMaxRange"></span>
                                         </div>
-                                        <div class="div_line"><button class="button_add_power">+</button><span
+                                        <div id="containerForBetterRange" class="div_line"><button id="add_Range" class="button_add_power">+</button><span
                                                id="PriceForBetterPower" class="How_many_for_better_power">50</span><span class="dolar">$</span>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                                         <div class="div_line">
                                             <span class="turret_ability">Dmg:</span><span id="MyPresentDmg" class="My_power"></span> <span  class="colourLast"> /</span> <span  class="colourLast" id="myMaxDmg">3</span>
                                         </div>
-                                        <div class="div_line"><button class="button_add_power">+</button><span
+                                        <div id="containerForBetterDMG" class="div_line"><button id="add_Dmg" class="button_add_power">+</button><span
                                               id="PriceForBetterDmg"  class="How_many_for_better_power">50</span><span class="dolar">$</span>
                                         </div>
                                     </div>
@@ -95,14 +95,14 @@
                              </div>
                              <div class="img_container">
                                     <img id="moreLife" src="img/life.png" alt="Life">
-                                    <span class="price">Price:</span><span class="price_color">150</span><span class="color">$</span>
+                                    <span class="price">Price:</span><span id="PriceForBetterLife" class="price_color">150</span><span class="color">$</span>
                              </div>
                         </div>
 
                 </li>
                 <li class="buttons">
                         <button id="buttonPlay">Play</button> 
-                        <button id="showTowerRange">Show Tower Range</button>
+                        <!-- <button id="showTowerRange">Show Tower Range</button> -->
                 </li>
             </ul>
         

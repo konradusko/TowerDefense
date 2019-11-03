@@ -5,8 +5,8 @@ const myGameArea = {
     ctx_2: undefined,
     canvas_3: document.getElementById("canvas3"), // wieze
     ctx_3: undefined,
-    canvas_4: document.getElementById("canvas4"), // zasieg wiezy
-    ctx_4: undefined,
+    // canvas_4: document.getElementById("canvas4"), // zasieg wiezy
+    // ctx_4: undefined,
     canvas_5: document.getElementById("canvas5"), // animacja strzalu wiezy
     ctx_5: undefined,
     canvas_6: document.getElementById("canvas6"), // tekst
@@ -17,22 +17,34 @@ const myGameArea = {
         turretOneButton: document.getElementById("wiezaImg"),
         turretTwoButton: document.getElementById("wiezaImg2"),
         turretThreeButton: document.getElementById("wiezaImg3"),
-        lifeForCastle:document.getElementById("moreLife"),
-        showTurretRange: document.getElementById("showTowerRange"),
-        previousTurret:document.getElementById("previousTurret"),
-        nextTurret:document.getElementById("nextTurret"),
+        lifeForCastle: document.getElementById("moreLife"),
+        turretRangeAndPosition: document.getElementById("imgTurret"),
+        previousTurret: document.getElementById("previousTurret"),
+        nextTurret: document.getElementById("nextTurret"),
+        add_RangeBTN: document.getElementById("add_Range"),
+        add_DmgBTN: document.getElementById("add_Dmg"),
+
     },
-    castleHealthElement:document.getElementById("castleLife"),
-    lvlElement:document.getElementById("lvl"),
-    goldElement:document.getElementById("gold"),
+    castleHealthElement: document.getElementById("castleLife"),
+    castlePriceForBetterLifeElement: document.getElementById("PriceForBetterLife"),
+    lvlElement: document.getElementById("lvl"),
+    goldElement: document.getElementById("gold"),
     map: document.getElementById("map"),
+    box_betterRange: document.getElementById("containerForBetterRange"),
+    box_BetterDMG: document.getElementById("containerForBetterDMG"),
+    myPresentRange: document.getElementById("MyPresentRange"),
+    PriceForBetterPower: document.getElementById("PriceForBetterPower"),
+    PriceForBetterDmg: document.getElementById("PriceForBetterDmg"),
+    MyPresentDmg: document.getElementById("MyPresentDmg"),
     castle: {
         width: 160,
         height: 120,
         x: 0,
         y: 480,
         img: document.getElementById("castleImg"),
-        health: 100
+        health: 100,
+        lvl_health: 1,
+        price_for_better_life: 150
     },
     grass: {
         width: 40,
@@ -76,9 +88,9 @@ const myGameArea = {
         img: document.getElementById("wiezaImg"),
         color_ammo: "red",
         price: 50,
-        lvl_DMG:1,//poziom ulepszenia  dmg
-        lvl_range:1,// poziom ulepszenia range
-        maxLvl:3,
+        lvl_DMG: 1, //poziom ulepszenia  dmg
+        lvl_range: 1, // poziom ulepszenia range
+        maxLvl: 3,
     },
     turretTwo: {
         x: 0,
@@ -91,9 +103,9 @@ const myGameArea = {
         img: document.getElementById("wiezaImg2"),
         color_ammo: "blue",
         price: 150,
-        lvl_DMG:1,//poziom ulepszenia  dmg
-        lvl_range:1,// poziom ulepszenia range
-        maxLvl:3,
+        lvl_DMG: 3, //poziom ulepszenia  dmg
+        lvl_range: 3, // poziom ulepszenia range
+        maxLvl: 3,
     },
     turretThree: {
         x: 0,
@@ -106,24 +118,23 @@ const myGameArea = {
         img: document.getElementById("wiezaImg3"),
         color_ammo: "purple",
         price: 250,
-        lvl_DMG:1,//poziom ulepszenia  dmg
-        lvl_range:1,// poziom ulepszenia range
-        maxLvl:4,
+        lvl_DMG: 1, //poziom ulepszenia  dmg
+        lvl_range: 1, // poziom ulepszenia range
+        maxLvl: 4,
     },
     interval: undefined,
     interval_2: undefined,
     lvl: 35,
-    clickShowAndHide: undefined, // zmienna do pokazywania i chowania zasiegu wiezy
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
     turretsArray: [],
     enemyInRangeArray: [],
-    money: 999,
+    money: 9999,
     numberOfEnemy: 5, //ile potworow ma sie pojawic // zalezne od poziomu
     colors: [],
-    numberOfTurret:undefined,
-    presentNumberOfTurret:undefined,
+    numberOfTurret: undefined,
+    presentNumberOfTurret: undefined,
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -134,9 +145,6 @@ const myGameArea = {
         this.ctx_3 = this.canvas_3.getContext("2d");
         this.canvas_3.height = 600;
         this.canvas_3.width = 800;
-        this.ctx_4 = this.canvas_4.getContext("2d");
-        this.canvas_4.height = 600;
-        this.canvas_4.width = 800;
         this.ctx_5 = this.canvas_5.getContext("2d");
         this.canvas_5.height = 600;
         this.canvas_5.width = 800;
@@ -207,9 +215,11 @@ const myGameArea = {
         this.buttonsEvents();
         this.innerTurrets();
         //wyswietlanie
+
         this.castleHealthElement.innerHTML = this.castle.health;
         this.goldElement.innerHTML = this.money;
         this.lvlElement.innerHTML = this.lvl;
+        this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life;
     },
     buttonsEvents: function () {
         this.buttons.play.addEventListener("click", () => {
@@ -224,82 +234,132 @@ const myGameArea = {
         this.buttons.turretThreeButton.addEventListener("click", (e) => {
             this.createTurretImg(e, this.turretThree);
         });
-        this.buttons.showTurretRange.addEventListener("click", () => {
-            this.showRange();
+
+        this.buttons.lifeForCastle.addEventListener("click", () => {
+            console.log(this.castle.price_for_better_life * this.castle.lvl_health)
+            if (this.money >= this.castle.price_for_better_life * this.castle.lvl_health) {
+                this.castle.health = this.castle.health + 50;
+                this.castleHealthElement.innerHTML = this.castle.health;
+                this.money = this.money - this.castle.price_for_better_life * this.castle.lvl_health;
+                this.goldElement.innerHTML = this.money;
+                this.castle.lvl_health = this.castle.lvl_health + 1;
+                this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life * this.castle.lvl_health;
+                console.log(this.castle.price_for_better_life * this.castle.lvl_health)
+            }
+
         });
-        this.buttons.lifeForCastle.addEventListener("click", ()=>{
-            this.castle.health = this.castle.health+50;
-            this.castleHealthElement.innerHTML = this.castle.health;
-        });
-        this.buttons.previousTurret.addEventListener("click", ()=>{
-            if(this.presentNumberOfTurret != 1){
-                this.presentNumberOfTurret = this.presentNumberOfTurret -1;
+        this.buttons.previousTurret.addEventListener("click", () => {
+            if (this.presentNumberOfTurret != 1) {
+                this.presentNumberOfTurret = this.presentNumberOfTurret - 1;
                 document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
-                this.innerTurrets();
+                this.innerTurrets(this.turretsArray[this.presentNumberOfTurret - 1]);
             }
         });
-        this.buttons.nextTurret.addEventListener("click", ()=>{
-          if(this.presentNumberOfTurret != this.numberOfTurret){
-            this.presentNumberOfTurret = this.presentNumberOfTurret +1;
-            document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
-            this.innerTurrets();
-          } 
+        this.buttons.nextTurret.addEventListener("click", () => {
+            if (this.presentNumberOfTurret != this.numberOfTurret) {
+                this.presentNumberOfTurret = this.presentNumberOfTurret + 1;
+                document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
+                this.innerTurrets(this.turretsArray[this.presentNumberOfTurret - 1]);
+            }
         });
+        this.buttons.turretRangeAndPosition.addEventListener("click", () => {
+            let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
+            let border = document.createElement("div");
+            let background = document.createElement("div");
+            border.style.position = "absolute";
+            border.style.border = "2px solid red";
+            border.style.paddingTop = Turret.range + "px";
+            border.style.paddingBottom = Turret.range + Turret.height + this.oneBox + "px";
+            border.style.paddingLeft = Turret.range + "px";
+            border.style.paddingRight = Turret.range + Turret.width + this.oneBox + "px";
+            border.style.left = Turret.x - this.oneBox / 2 - Turret.range + "px";
+            border.style.top = Turret.y - this.oneBox / 2 - Turret.range + "px";
+            border.id = border;
+            background.style.position = "absolute";
+            background.style.width = Turret.width + this.oneBox + "px";
+            background.style.height = Turret.height + this.oneBox + "px";
+            background.style.background = "purple";
+            background.style.opacity = .8;
+            background.id = background;
+            background.style.left = Turret.x - this.oneBox / 2 + "px";
+            background.style.top = Turret.y - this.oneBox / 2 + "px";
+            this.map.append(border, background);
+            setTimeout(() => {
+                document.getElementById(border).remove();
+                document.getElementById(background).remove();
+            }, 5000);
+        });
+        this.buttons.add_RangeBTN.addEventListener("click", () => {
+            let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
+            if (this.money >= Turret.price * Turret.lvl_range && Turret.lvl_range < Turret.maxLvl) {
+                Turret.lvl_range = Turret.lvl_range + 1;
+                Turret.range = Turret.range + this.oneBox;
+                this.money = this.money - Turret.price * Turret.lvl_range;
+                this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range;
+                this.goldElement.innerHTML = this.money;
+                this.myPresentRange.innerHTML = Turret.lvl_range
+                if (Turret.lvl_range == Turret.maxLvl) {
+                    this.box_betterRange.style.display = "none";
+                }
+            }
+        });
+        this.buttons.add_DmgBTN.addEventListener("click", () => {
+            let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
+            if (this.money >= Turret.price * Turret.lvl_DMG && Turret.lvl_DMG < Turret.maxLvl) {
+                Turret.lvl_DMG = Turret.lvl_DMG + 1;
+                console.log(Turret)
+                Turret.dmg = Turret.dmg + 5; // o 5 zwiekszam dmg
+                console.log(this.turretsArray)
+                this.money = this.money - Turret.price * Turret.lvl_DMG;
+                this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG;
+                this.goldElement.innerHTML = this.money;
+                this.MyPresentDmg.innerHTML = Turret.lvl_DMG;
+                if (Turret.lvl_DMG == Turret.maxLvl) {
+                    this.box_BetterDMG.style.display = "none";
+                }
+
+            }
+        })
     },
-    showRange: function () {
-        if (this.turretsArray.length != 0) {
-            if (this.clickShowAndHide == undefined) {
-                this.turretsArray.forEach(el => {
-                    let TopLeftX = el.x - this.oneBox / 2 - el.range;
-                    let TopLeftY = el.y - this.oneBox / 2 - el.range;
-                    this.ctx_4.beginPath();
-                    this.ctx_4.strokeStyle = "red";
-                    this.ctx_4.lineWidth = 2;
-                    this.ctx_4.rect(TopLeftX, TopLeftY, el.width + this.oneBox + el.range * 2, el.height + this.oneBox + el.range * 2);
-                    this.ctx_4.stroke();
-                })
-                this.clickShowAndHide = 1;
-                this.buttons.showTurretRange.innerHTML = "Hide Tower Range";
+    innerTurrets: function (Turret) {
+        console.log(Turret)
+        // const turretImg = document.getElementById("imgTurret");
+        const myMaxRange = document.getElementById("myMaxRange");
+        const myMaxDmg = document.getElementById("myMaxDmg");
+        const turretContainer = document.getElementById("turret_list");
+        const numberOfTurretsContainer = document.getElementById("numberOfTurrets");
+        if (this.turretsArray.length == 0) {
+            turretContainer.style.display = "none";
+            numberOfTurretsContainer.style.display = "none"
+            this.buttons.previousTurret.style.display = "none";
+            this.buttons.nextTurret.style.display = "none";
+        } else {
+            turretContainer.style.display = "flex";
+            numberOfTurretsContainer.style.display = "block";
+            this.buttons.previousTurret.style.display = "block";
+            this.buttons.nextTurret.style.display = "block";
+            // let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
+            if (Turret.lvl_DMG >= Turret.maxLvl) {
+                this.box_BetterDMG.style.display = "none";
             } else {
-                console.log("xd robi sie ? ")
-                this.ctx_4.clearRect(0, 0, this.canvas_4.width, this.canvas_4.height);
-                this.clickShowAndHide = undefined;
-                this.buttons.showTurretRange.innerHTML = "Show Tower Range";
+                this.box_BetterDMG.style.display = "block";
             }
+            if (Turret.lvl_range >= Turret.maxLvl) {
+                this.box_betterRange.style.display = "none";
+            } else {
+                this.box_betterRange.style.display = "block";
+            }
+            this.buttons.turretRangeAndPosition.src = Turret.img.src; //obecny obrazek wiezy
+            this.myPresentRange.innerHTML = Turret.lvl_range; //obecny poziom range mojej wiezy
+            myMaxRange.innerHTML = Turret.maxLvl; //maksymanly poziom range mojej wiezy
+            this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG; //cena za ulepszenie dmg
+            this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range; //cena za ulepszenie range
+            this.MyPresentDmg.innerHTML = Turret.lvl_DMG; //obecny poziom dmg
+            myMaxDmg.innerHTML = Turret.maxLvl;
         }
-    },
-    innerTurrets:function(){
-       const turretImg = document.getElementById("imgTurret");
-       const myPresentRange = document.getElementById("MyPresentRange");
-       const myMaxRange = document.getElementById("myMaxRange");
-       const PriceForBetterPower = document.getElementById("PriceForBetterPower");
-       const MyPresentDmg = document.getElementById("MyPresentDmg");
-       const myMaxDmg = document.getElementById("myMaxDmg");
-       const PriceForBetterDmg = document.getElementById("PriceForBetterDmg");
-       const turretContainer = document.getElementById("turret_list");
-       const numberOfTurretsContainer = document.getElementById("numberOfTurrets");
-       if(this.turretsArray.length == 0){
-           turretContainer.style.display = "none";
-           numberOfTurretsContainer.style.display = "none"
-           this.buttons.previousTurret.style.display = "none";
-           this.buttons.nextTurret.style.display = "none";
-       }else{
-        turretContainer.style.display = "flex";
-        numberOfTurretsContainer.style.display = "block";
-        this.buttons.previousTurret.style.display = "block";
-        this.buttons.nextTurret.style.display = "block";
-        turretImg.src = this.turretsArray[this.presentNumberOfTurret -1].img.src;//obecny obrazek wiezy
-        myPresentRange.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].lvl_range;//obecny poziom range mojej wiezy
-        myMaxRange.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].maxLvl;//maksymanly poziom range mojej wiezy
-        PriceForBetterDmg.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].price* this.turretsArray[this.numberOfTurret-1].lvl_DMG;//cena za ulepszenie dmg
-        PriceForBetterPower.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].price*this.turretsArray[this.numberOfTurret-1].lvl_range;//cena za ulepszenie range
-        MyPresentDmg.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].lvl_DMG;//obecny poziom dmg
-        myMaxDmg.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].maxLvl;
-       }
-       console.log(this.numberOfTurret)
+        // console.log(this.numberOfTurret)
     },
     createTurretImg: function (e, turret) {
-        const saveMemory = this.clickShowAndHide;
         let numberOfquad = myGameArea.oneBox;
         let imageTurret = document.createElement("img");
         let border = document.createElement("div");
@@ -338,8 +398,7 @@ const myGameArea = {
         let castleHeight = this.castle.height / this.oneBox;
         this.map.append(imageTurret, border, background);
         this.map.addEventListener("mousemove", position)
-        this.clickShowAndHide = 1;
-        this.showRange();
+
         function position(e) {
             imageTurret.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
             imageTurret.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
@@ -348,7 +407,6 @@ const myGameArea = {
             background.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + "px";
             background.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + "px";
             let bol = ifIcanBuildHereTurret(e);
-            //   console.log(bol)
             if (bol == true) {
                 background.style.background = "green";
                 myGameArea.map.addEventListener("click", removeAndBuild) //mozna budowac
@@ -362,7 +420,7 @@ const myGameArea = {
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let index = myGameArea.turretsArray.length + 1;
-            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price,turret.lvl_DMG,turret.lvl_range,turret.maxLvl)
+            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price, turret.lvl_DMG, turret.lvl_range, turret.maxLvl)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
             document.getElementById(imageTurret).remove();
@@ -372,23 +430,16 @@ const myGameArea = {
             console.log(myGameArea.turretsArray)
             myGameArea.startShootLoop(myGameArea.turretsArray.slice(-1)[0]);
             //  console.log(saveMemory)
-            if(myGameArea.turretsArray.length == 1){
+            if (myGameArea.turretsArray.length == 1) {
                 myGameArea.numberOfTurret = myGameArea.turretsArray.length;
                 myGameArea.presentNumberOfTurret = myGameArea.turretsArray.length;
                 document.getElementById("presentTurret").innerHTML = myGameArea.presentNumberOfTurret;
-                document.getElementById("howMenyTurrets").innerHTML =    myGameArea.numberOfTurret;
-             myGameArea.innerTurrets();
-            }else{
-                myGameArea.numberOfTurret = myGameArea.turretsArray.length;
-                document.getElementById("howMenyTurrets").innerHTML =    myGameArea.numberOfTurret;
-
-            }
-            if (saveMemory == undefined) {
-                myGameArea.clickShowAndHide = 1;
-                myGameArea.showRange();
+                document.getElementById("howMenyTurrets").innerHTML = myGameArea.numberOfTurret;
+                myGameArea.innerTurrets(myGameArea.turretsArray[myGameArea.presentNumberOfTurret - 1]);
             } else {
-                myGameArea.clickShowAndHide = undefined;
-                myGameArea.showRange();
+                myGameArea.numberOfTurret = myGameArea.turretsArray.length;
+                document.getElementById("howMenyTurrets").innerHTML = myGameArea.numberOfTurret;
+
             }
         }
 
@@ -495,35 +546,35 @@ const myGameArea = {
                     this.enemyOne.money = this.enemyOne.money + 1;
                     this.enemyOne.health = this.enemyOne.health + 3;
                     break;
-                // case 10:
-                //     this.numberOfEnemy = this.numberOfEnemy + 3;
-                //     this.enemyOne.color = "Peru";
-                //     this.enemyOne.speed = this.enemyOne.speed - 70;
-                //     this.enemyOne.money = this.enemyOne.money + 10;
-                //     this.enemyOne.health = this.enemyOne.health + 10;
-                //     this.enemyOne.dmg = this.enemyOne.dmg + 5;
-                //     break;
+                    // case 10:
+                    //     this.numberOfEnemy = this.numberOfEnemy + 3;
+                    //     this.enemyOne.color = "Peru";
+                    //     this.enemyOne.speed = this.enemyOne.speed - 70;
+                    //     this.enemyOne.money = this.enemyOne.money + 10;
+                    //     this.enemyOne.health = this.enemyOne.health + 10;
+                    //     this.enemyOne.dmg = this.enemyOne.dmg + 5;
+                    //     break;
             }
-        } else if(this.lvl < 20) {
+        } else if (this.lvl < 20) {
             this.colors = [];
             for (let i = 0; i <= 3; i++) {
                 this.backgroundGenerator();
             }
             this.enemyOne.color = "gradient";
-        }else if(this.lvl < 30){
+        } else if (this.lvl < 30) {
             this.colors = [];
             for (let i = 0; i <= 5; i++) {
                 this.backgroundGenerator();
             }
             this.enemyOne.color = "gradient_2";
-        }else if(this.lvl > 30){
+        } else if (this.lvl > 30) {
             this.colors = [];
             for (let i = 0; i <= 10; i++) {
                 this.backgroundGenerator();
             }
             this.enemyOne.color = "gradient_3";
         }
-      //  console.log(this.colors)
+        //  console.log(this.colors)
         this.startGameLoop();
     },
     backgroundGenerator: function () {
@@ -555,8 +606,8 @@ const myGameArea = {
                     if (enemy.x < this.enemypathArray[0].x) {
                         enemy.x = enemy.x + this.oneBox;
                     } else {
-                        enemy.x = this.enemypathArray[enemy.move].x + (this.oneBox-enemy.width)/2;
-                        enemy.y = this.enemypathArray[enemy.move].y + (this.oneBox-enemy.height)/2;
+                        enemy.x = this.enemypathArray[enemy.move].x + (this.oneBox - enemy.width) / 2;
+                        enemy.y = this.enemypathArray[enemy.move].y + (this.oneBox - enemy.height) / 2;
                         enemy.move = enemy.move + 1;
                         this.drawEnemy();
                     }
@@ -584,6 +635,8 @@ const myGameArea = {
     loop: function () {
         this.lvl = this.lvl + 1;
         this.lvlElement.innerHTML = this.lvl;
+        this.castle.health = this.castle.health + 2 * this.lvl;
+
         function text(counter) {
             if (counter > 0) {
                 counter--;
@@ -638,7 +691,7 @@ const myGameArea = {
                     my_gradient.addColorStop(0.7, this.colors[2]);
                     my_gradient.addColorStop(1, this.colors[3]);
                     this.ctx_2.fillStyle = my_gradient;
-                }else if(this.enemyOne.color =="gradient_2"){
+                } else if (this.enemyOne.color == "gradient_2") {
                     let my_gradient = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.width + enemy.x, enemy.height + enemy.y);
                     my_gradient.addColorStop(0, this.colors[0]);
                     my_gradient.addColorStop(0.2, this.colors[1]);
@@ -647,7 +700,7 @@ const myGameArea = {
                     my_gradient.addColorStop(0.8, this.colors[4]);
                     my_gradient.addColorStop(1, this.colors[5]);
                     this.ctx_2.fillStyle = my_gradient;
-                }else if(this.enemyOne.color == "gradient_3"){
+                } else if (this.enemyOne.color == "gradient_3") {
                     let my_gradient = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.width + enemy.x, enemy.height + enemy.y);
                     my_gradient.addColorStop(0, this.colors[0]);
                     my_gradient.addColorStop(0.1, this.colors[1]);
@@ -669,15 +722,15 @@ const myGameArea = {
                 if (enemy.health <= this.enemyOne.health / 4) {
                     //25%
                     this.ctx_2.fillStyle = "red";
-                    this.ctx_2.fillRect(enemy.x + (this.oneBox-enemy.width)/2, enemy.y + (this.oneBox-enemy.height)/2, (this.oneBox-enemy.width)*2, (this.oneBox-enemy.height)*2);
+                    this.ctx_2.fillRect(enemy.x + (this.oneBox - enemy.width) / 2, enemy.y + (this.oneBox - enemy.height) / 2, (this.oneBox - enemy.width) * 2, (this.oneBox - enemy.height) * 2);
                 } else if (enemy.health <= this.enemyOne.health - (this.enemyOne.health / 2)) {
                     //50% hp
                     this.ctx_2.fillStyle = "red";
-                    this.ctx_2.fillRect(enemy.x + (this.oneBox-enemy.width)/2, enemy.y + (this.oneBox-enemy.height)/2, enemy.width/2, enemy.height/2);
+                    this.ctx_2.fillRect(enemy.x + (this.oneBox - enemy.width) / 2, enemy.y + (this.oneBox - enemy.height) / 2, enemy.width / 2, enemy.height / 2);
                 } else if (enemy.health <= this.enemyOne.health - (this.enemyOne.health / 4)) {
                     //75% hp
                     this.ctx_2.fillStyle = "red";
-                    this.ctx_2.fillRect(enemy.x + (this.oneBox-enemy.width)/2, enemy.y + (this.oneBox-enemy.height)/2, (this.oneBox-enemy.width)/2, (this.oneBox-enemy.height)/2);
+                    this.ctx_2.fillRect(enemy.x + (this.oneBox - enemy.width) / 2, enemy.y + (this.oneBox - enemy.height) / 2, (this.oneBox - enemy.width) / 2, (this.oneBox - enemy.height) / 2);
                 }
             })
         }
@@ -726,7 +779,7 @@ const myGameArea = {
             }
         }, 20)
     },
-    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, price,lvl_DMG,lvl_range,maxLvl, interval) {
+    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, price, lvl_DMG, lvl_range, maxLvl, interval) {
         let object = new Object();
         object.width = width;
         object.height = height;

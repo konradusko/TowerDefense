@@ -65,7 +65,7 @@ const myGameArea = {
         width: 40,
         height: 40,
         range: 40,
-        dmg: 35,
+        dmg: 30,
         speed: 1200,
         img: document.getElementById("wiezaImg"),
         color_ammo: "red",
@@ -97,7 +97,7 @@ const myGameArea = {
     },
     interval: undefined,
     interval_2: undefined,
-    lvl: 12,
+    lvl: 35,
     clickShowAndHide: undefined, // zmienna do pokazywania i chowania zasiegu wiezy
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
@@ -415,22 +415,35 @@ const myGameArea = {
                     this.enemyOne.money = this.enemyOne.money + 1;
                     this.enemyOne.health = this.enemyOne.health + 3;
                     break;
-                case 10:
-                    this.numberOfEnemy = this.numberOfEnemy + 3;
-                    this.enemyOne.color = "Peru";
-                    this.enemyOne.speed = this.enemyOne.speed - 70;
-                    this.enemyOne.money = this.enemyOne.money + 10;
-                    this.enemyOne.health = this.enemyOne.health + 10;
-                    this.enemyOne.dmg = this.enemyOne.dmg + 5;
-                    break;
+                // case 10:
+                //     this.numberOfEnemy = this.numberOfEnemy + 3;
+                //     this.enemyOne.color = "Peru";
+                //     this.enemyOne.speed = this.enemyOne.speed - 70;
+                //     this.enemyOne.money = this.enemyOne.money + 10;
+                //     this.enemyOne.health = this.enemyOne.health + 10;
+                //     this.enemyOne.dmg = this.enemyOne.dmg + 5;
+                //     break;
             }
-        } else {
+        } else if(this.lvl < 20) {
             this.colors = [];
             for (let i = 0; i <= 3; i++) {
                 this.backgroundGenerator();
             }
             this.enemyOne.color = "gradient";
+        }else if(this.lvl < 30){
+            this.colors = [];
+            for (let i = 0; i <= 5; i++) {
+                this.backgroundGenerator();
+            }
+            this.enemyOne.color = "gradient_2";
+        }else if(this.lvl > 30){
+            this.colors = [];
+            for (let i = 0; i <= 10; i++) {
+                this.backgroundGenerator();
+            }
+            this.enemyOne.color = "gradient_3";
         }
+      //  console.log(this.colors)
         this.startGameLoop();
     },
     backgroundGenerator: function () {
@@ -462,8 +475,8 @@ const myGameArea = {
                     if (enemy.x < this.enemypathArray[0].x) {
                         enemy.x = enemy.x + this.oneBox;
                     } else {
-                        enemy.x = this.enemypathArray[enemy.move].x + 5;
-                        enemy.y = this.enemypathArray[enemy.move].y + 5;
+                        enemy.x = this.enemypathArray[enemy.move].x + (this.oneBox-enemy.width)/2;
+                        enemy.y = this.enemypathArray[enemy.move].y + (this.oneBox-enemy.height)/2;
                         enemy.move = enemy.move + 1;
                         // this.Mybackground_gr = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.x+enemy.width, enemy.y+enemy.height)
                         //   this.test(enemy.x, enemy.y, enemy.x+enemy.width*2, enemy.y+enemy.height*2);
@@ -542,9 +555,32 @@ const myGameArea = {
                 if (this.enemyOne.color == "gradient") {
                     let my_gradient = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.width + enemy.x, enemy.height + enemy.y);
                     my_gradient.addColorStop(0, this.colors[0]);
-                    my_gradient.addColorStop(0.5, this.colors[1]);
+                    my_gradient.addColorStop(0.4, this.colors[1]);
                     my_gradient.addColorStop(0.7, this.colors[2]);
-                    my_gradient.addColorStop(0.9, this.colors[3]);
+                    my_gradient.addColorStop(1, this.colors[3]);
+                    this.ctx_2.fillStyle = my_gradient;
+                }else if(this.enemyOne.color =="gradient_2"){
+                    let my_gradient = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.width + enemy.x, enemy.height + enemy.y);
+                    my_gradient.addColorStop(0, this.colors[0]);
+                    my_gradient.addColorStop(0.2, this.colors[1]);
+                    my_gradient.addColorStop(0.4, this.colors[2]);
+                    my_gradient.addColorStop(0.6, this.colors[3]);
+                    my_gradient.addColorStop(0.8, this.colors[4]);
+                    my_gradient.addColorStop(1, this.colors[5]);
+                    this.ctx_2.fillStyle = my_gradient;
+                }else if(this.enemyOne.color == "gradient_3"){
+                    let my_gradient = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.width + enemy.x, enemy.height + enemy.y);
+                    my_gradient.addColorStop(0, this.colors[0]);
+                    my_gradient.addColorStop(0.1, this.colors[1]);
+                    my_gradient.addColorStop(0.2, this.colors[2]);
+                    my_gradient.addColorStop(0.3, this.colors[3]);
+                    my_gradient.addColorStop(0.4, this.colors[4]);
+                    my_gradient.addColorStop(0.5, this.colors[5]);
+                    my_gradient.addColorStop(0.6, this.colors[6]);
+                    my_gradient.addColorStop(0.7, this.colors[7]);
+                    my_gradient.addColorStop(0.8, this.colors[8]);
+                    my_gradient.addColorStop(0.9, this.colors[9]);
+                    my_gradient.addColorStop(1, this.colors[10]);
                     this.ctx_2.fillStyle = my_gradient;
                 } else {
                     this.ctx_2.fillStyle = enemy.color;
@@ -554,15 +590,15 @@ const myGameArea = {
                 if (enemy.health <= this.enemyOne.health / 4) {
                     //25%
                     this.ctx_2.fillStyle = "red";
-                    this.ctx_2.fillRect(enemy.x + 5, enemy.y + 5, 20, 20);
+                    this.ctx_2.fillRect(enemy.x + (this.oneBox-enemy.width)/2, enemy.y + (this.oneBox-enemy.height)/2, (this.oneBox-enemy.width)*2, (this.oneBox-enemy.height)*2);
                 } else if (enemy.health <= this.enemyOne.health - (this.enemyOne.health / 2)) {
                     //50% hp
                     this.ctx_2.fillStyle = "red";
-                    this.ctx_2.fillRect(enemy.x + 5, enemy.y + 5, 15, 15);
+                    this.ctx_2.fillRect(enemy.x + (this.oneBox-enemy.width)/2, enemy.y + (this.oneBox-enemy.height)/2, enemy.width/2, enemy.height/2);
                 } else if (enemy.health <= this.enemyOne.health - (this.enemyOne.health / 4)) {
                     //75% hp
                     this.ctx_2.fillStyle = "red";
-                    this.ctx_2.fillRect(enemy.x + 5, enemy.y + 5, 5, 5);
+                    this.ctx_2.fillRect(enemy.x + (this.oneBox-enemy.width)/2, enemy.y + (this.oneBox-enemy.height)/2, (this.oneBox-enemy.width)/2, (this.oneBox-enemy.height)/2);
                 }
             })
         }

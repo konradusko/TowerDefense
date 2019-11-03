@@ -107,6 +107,12 @@
     background-color: rgba(96, 106, 88, 0.9);
     z-index:3;
 }
+.auto{
+    margin:auto;
+    color:white;
+    font-size:25px;
+    cursor: pointer;
+}
 .ul_container .your_Turrets .title {
     height:25px;
     width:180px;

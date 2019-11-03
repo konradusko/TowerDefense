@@ -134,6 +134,7 @@ const myGameArea = {
     colors: [],
     numberOfTurret: undefined,
     presentNumberOfTurret: undefined,
+    allowToBuild:true,
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -187,7 +188,6 @@ const myGameArea = {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x - this.oneBox;
         };
-
         console.log(this.enemypathArray)
         this.number.width = this.canvas.width / this.oneBox; //ile kratek szerokosci
         this.number.height = this.canvas.height / this.oneBox //ile kratek wysokosci
@@ -225,18 +225,18 @@ const myGameArea = {
             this.startGameLoop();
         });
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            if(this.money >= this.turretOne.price){
+            if(this.money >= this.turretOne.price && this.allowToBuild == true){
                 this.createTurretImg(e, this.turretOne);
             }
        
         });
         this.buttons.turretTwoButton.addEventListener("click", (e) => {
-            if(this.money >= this.turretTwo.price){
+            if(this.money >= this.turretTwo.price && this.allowToBuild == true){
                 this.createTurretImg(e, this.turretTwo);
             }
         });
         this.buttons.turretThreeButton.addEventListener("click", (e) => {
-            if(this.money >= this.turretThree.price){
+            if(this.money >= this.turretThree.price && this.allowToBuild == true){
                 this.createTurretImg(e, this.turretThree);
             }
 
@@ -363,6 +363,7 @@ const myGameArea = {
         }
     },
     createTurretImg: function (e, turret) {
+        this.allowToBuild = false;
         let numberOfquad = myGameArea.oneBox;
         let imageTurret = document.createElement("img");
         let border = document.createElement("div");
@@ -403,7 +404,7 @@ const myGameArea = {
         this.map.append(imageTurret, border, background);
         this.map.addEventListener("mousemove", position)
         your_turrets_container.style.display = "none";
-       deleteTurret.style.display = "block";
+       deleteTurret.style.display = "flex";
        previousTurret.style.display = "none"
        nextTurret.style.display = "none"
         function position(e) {
@@ -424,11 +425,14 @@ const myGameArea = {
             }
         }
         function Remove(e){
-       if(e.target.id == "DeleteTurretFromMouse"){
+       if(e.target.id == "DeleteTurretFromMouse" || e.target.classList == "auto"){
         your_turrets_container.style.display = "block";
         deleteTurret.style.display = "none";
+       if(myGameArea.turretsArray.length > 0){
         previousTurret.style.display = "block"
-        nextTurret.style.display = "block"
+     nextTurret.style.display = "block"
+    }
+    myGameArea.allowToBuild = true;
         document.getElementById("imageTurret").remove();
         document.getElementById("border").remove();
         document.getElementById("background").remove();
@@ -439,6 +443,7 @@ const myGameArea = {
         }
         function removeAndBuild(e) {
             console.log("dzieje sie")
+            myGameArea.allowToBuild = true;
             your_turrets_container.style.display = "block";
             deleteTurret.style.display = "none";
             previousTurret.style.display = "block"

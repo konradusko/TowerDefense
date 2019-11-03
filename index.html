@@ -1,48 +1,113 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="style.css" rel="stylesheet">
     <title>TowerDefense</title>
-  
+
 </head>
+
 <body>
     <div class="container">
-            <div id="map">
-                    <canvas id="canvas"></canvas>
-                     <canvas id="canvas2"></canvas>
-                     <canvas id="canvas3"></canvas>
-                     <canvas id ="canvas4"></canvas>
-                     <canvas id="canvas5"></canvas>
-                     <canvas id= canvas6></canvas>
-            </div>
-            <div id="menu" class="menu_container">
-                
-                <span class="span">Twoje monety: <b >101010</b></span>
-                <span class="span">Życie: <b>100</b></span>
-                <div class="your_turrets"> <span class="title"><b>Twoje wieże</b></span>
-                           <div class="container_turrets">
-                           </div>
-                </div>
-                <div>SKLEP Z WIEZAMI</div>
-                    <button id="buttonPlay">Play</button> 
-                    <button id="showTowerRange">Show Tower Range</button>
-                    <img id="wiezaImg" src="img/wieza.png" alt="Turret">
-                    <img id="wiezaImg2" src="img/wieza2.png" alt="Turret">
-                    <img id="wiezaImg3" src="img/wieza3.png" alt="Turret"> 
-            </div>
-   
-    </div>
-  
-   
+        <div id="map">
+            <canvas id="canvas"></canvas>
+            <canvas id="canvas2"></canvas>
+            <canvas id="canvas3"></canvas>
+            <canvas id="canvas4"></canvas>
+            <canvas id="canvas5"></canvas>
+            <canvas id=canvas6></canvas>
+        </div>
+        <div id="menu" class="menu_container">
+            <ul class="ul_container">
+                <li class="Your_stats">
+                    <div class="container">
+                        <p>Life:</p>
+                        <span>100</span>
+                    </div>
 
-    
-    <img  id="castleImg" class="none" src="img/castle.png" alt="castle">
-    <img id="grassImg" class="none" src="img/grass.png" alt = "grass">
+                </li>
+                <li class="Your_stats">
+                    <div class="container">
+                        <p>Gold:</p>
+                        <span>10000</span>
+                        <p>$</p>
+                    </div>
+
+                </li>
+                <li class="your_Turrets">
+                    <span class="title"> <p> Your Turrets</p>  <div class="number_of_turrets"> 0/0</div></span>
+                    <div class="your_Turrets_container">
+                        <ul class="your_Turrets_ul">
+                            <li class="li_turret">
+                                <img src="img/wieza.png" alt="">
+                                <div class="your_Turrets_buttons">
+                                    <div class="button_1">
+                                        <div class="div_line">
+                                            <span class="turret_ability">Range:</span><span class="My_power">1</span><span>/</span> <span>3</span>
+                                        </div>
+                                        <div class="div_line"><button class="button_add_power">+</button><span
+                                                class="How_many_for_better_power">50</span><span class="dolar">$</span>
+                                        </div>
+                                    </div>
+                                    <div class="button_1">
+                                        <div class="div_line">
+                                            <span class="turret_ability">Dmg:</span><span class="My_power">1</span> <span>/</span> <span>3</span>
+                                        </div>
+                                        <div class="div_line"><button class="button_add_power">+</button><span
+                                                class="How_many_for_better_power">50</span><span class="dolar">$</span>
+                                        </div>
+                                    </div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </li>
+                <li class="shop">
+                    <p>Shop</p>
+                    <div class="row">
+                            <div class="img_container">
+                                    <img id="wiezaImg" src="img/wieza.png" alt="Turret">
+                                    <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                             </div>
+                     <div class="img_container">
+                            <img id="wiezaImg2" src="img/wieza2.png" alt="Turret">
+                            <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                     </div>
+                    </div>
+                    <div class="row">
+                            <div class="img_container">
+                                    <img id="wiezaImg3" src="img/wieza3.png" alt="Turret"> 
+                                    <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                             </div>
+                             <div class="img_container">
+                                    <img id="wiezaImg" src="img/life.png" alt="Life">
+                                    <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                             </div>
+                        </div>
+
+                </li>
+                <li class="buttons">
+                        <button id="buttonPlay">Play</button> 
+                        <button id="showTowerRange">Show Tower Range</button>
+                </li>
+            </ul>
+        
+        </div>
+
+    </div>
+
+
+
+
+    <img id="castleImg" class="none" src="img/castle.png" alt="castle">
+    <img id="grassImg" class="none" src="img/grass.png" alt="grass">
     <img id="enemyPathImg" class="none" src="img/enemyPath.png" alt="enemyPath">
- 
+
     <script src="main.js"></script>
 </body>
+
 </html>

@@ -478,8 +478,6 @@ const myGameArea = {
                         enemy.x = this.enemypathArray[enemy.move].x + (this.oneBox-enemy.width)/2;
                         enemy.y = this.enemypathArray[enemy.move].y + (this.oneBox-enemy.height)/2;
                         enemy.move = enemy.move + 1;
-                        // this.Mybackground_gr = this.ctx_2.createLinearGradient(enemy.x, enemy.y, enemy.x+enemy.width, enemy.y+enemy.height)
-                        //   this.test(enemy.x, enemy.y, enemy.x+enemy.width*2, enemy.y+enemy.height*2);
                         this.drawEnemy();
                     }
                 } else if (enemy.move == this.enemypathArray.length) {

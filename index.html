@@ -21,43 +21,53 @@
             <canvas id=canvas6></canvas>
         </div>
         <div id="menu" class="menu_container">
+            <div class="absoluteArrows"><div id="previousTurret" class="arrow"><</div>
+        <div id="nextTurret" class="arrow">></div>
+        </div>
             <ul class="ul_container">
+                    <li class="Your_stats">
+                            <div class="container">
+                                <p>Lvl:</p>
+                                <span id="lvl">1</span>
+                            </div>
+        
+                        </li>
                 <li class="Your_stats">
                     <div class="container">
                         <p>Life:</p>
-                        <span>100</span>
+                        <span id="castleLife">100</span>
                     </div>
 
                 </li>
                 <li class="Your_stats">
                     <div class="container">
                         <p>Gold:</p>
-                        <span>10000</span>
+                        <span id="gold">10000</span>
                         <p>$</p>
                     </div>
 
                 </li>
                 <li class="your_Turrets">
-                    <span class="title"> <p> Your Turrets</p>  <div class="number_of_turrets"> 0/0</div></span>
+                    <span class="title"> <p> Your Turrets</p>  <div id="numberOfTurrets" class="number_of_turrets"> <span id="presentTurret">0</span><span>/</span><span id="howMenyTurrets">0</span></div></span>
                     <div class="your_Turrets_container">
-                        <ul class="your_Turrets_ul">
+                        <ul id="turret_list" class="your_Turrets_ul">
                             <li class="li_turret">
-                                <img src="img/wieza.png" alt="">
+                                <img id="imgTurret" src="" alt="">
                                 <div class="your_Turrets_buttons">
                                     <div class="button_1">
                                         <div class="div_line">
-                                            <span class="turret_ability">Range:</span><span class="My_power">1</span><span>/</span> <span>3</span>
+                                            <span class="turret_ability">Range:</span><span id="MyPresentRange" class="My_power"></span><span  class="colourLast"> /</span> <span class="colourLast" id="myMaxRange"></span>
                                         </div>
                                         <div class="div_line"><button class="button_add_power">+</button><span
-                                                class="How_many_for_better_power">50</span><span class="dolar">$</span>
+                                               id="PriceForBetterPower" class="How_many_for_better_power">50</span><span class="dolar">$</span>
                                         </div>
                                     </div>
                                     <div class="button_1">
                                         <div class="div_line">
-                                            <span class="turret_ability">Dmg:</span><span class="My_power">1</span> <span>/</span> <span>3</span>
+                                            <span class="turret_ability">Dmg:</span><span id="MyPresentDmg" class="My_power"></span> <span  class="colourLast"> /</span> <span  class="colourLast" id="myMaxDmg">3</span>
                                         </div>
                                         <div class="div_line"><button class="button_add_power">+</button><span
-                                                class="How_many_for_better_power">50</span><span class="dolar">$</span>
+                                              id="PriceForBetterDmg"  class="How_many_for_better_power">50</span><span class="dolar">$</span>
                                         </div>
                                     </div>
                             </li>
@@ -71,21 +81,21 @@
                     <div class="row">
                             <div class="img_container">
                                     <img id="wiezaImg" src="img/wieza.png" alt="Turret">
-                                    <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                                    <span class="price">Price:</span><span class="price_color">50</span><span class="color">$</span>
                              </div>
                      <div class="img_container">
                             <img id="wiezaImg2" src="img/wieza2.png" alt="Turret">
-                            <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                            <span class="price">Price:</span><span class="price_color">150</span><span class="color">$</span>
                      </div>
                     </div>
                     <div class="row">
                             <div class="img_container">
                                     <img id="wiezaImg3" src="img/wieza3.png" alt="Turret"> 
-                                    <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                                    <span class="price">Price:</span><span class="price_color">250</span><span class="color">$</span>
                              </div>
                              <div class="img_container">
-                                    <img id="wiezaImg" src="img/life.png" alt="Life">
-                                    <span class="price">Price:</span><span class="price_color">30</span><span class="color">$</span>
+                                    <img id="moreLife" src="img/life.png" alt="Life">
+                                    <span class="price">Price:</span><span class="price_color">150</span><span class="color">$</span>
                              </div>
                         </div>
 

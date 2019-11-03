@@ -17,8 +17,14 @@ const myGameArea = {
         turretOneButton: document.getElementById("wiezaImg"),
         turretTwoButton: document.getElementById("wiezaImg2"),
         turretThreeButton: document.getElementById("wiezaImg3"),
+        lifeForCastle:document.getElementById("moreLife"),
         showTurretRange: document.getElementById("showTowerRange"),
+        previousTurret:document.getElementById("previousTurret"),
+        nextTurret:document.getElementById("nextTurret"),
     },
+    castleHealthElement:document.getElementById("castleLife"),
+    lvlElement:document.getElementById("lvl"),
+    goldElement:document.getElementById("gold"),
     map: document.getElementById("map"),
     castle: {
         width: 160,
@@ -70,6 +76,9 @@ const myGameArea = {
         img: document.getElementById("wiezaImg"),
         color_ammo: "red",
         price: 50,
+        lvl_DMG:1,//poziom ulepszenia  dmg
+        lvl_range:1,// poziom ulepszenia range
+        maxLvl:3,
     },
     turretTwo: {
         x: 0,
@@ -82,6 +91,9 @@ const myGameArea = {
         img: document.getElementById("wiezaImg2"),
         color_ammo: "blue",
         price: 150,
+        lvl_DMG:1,//poziom ulepszenia  dmg
+        lvl_range:1,// poziom ulepszenia range
+        maxLvl:3,
     },
     turretThree: {
         x: 0,
@@ -94,6 +106,9 @@ const myGameArea = {
         img: document.getElementById("wiezaImg3"),
         color_ammo: "purple",
         price: 250,
+        lvl_DMG:1,//poziom ulepszenia  dmg
+        lvl_range:1,// poziom ulepszenia range
+        maxLvl:4,
     },
     interval: undefined,
     interval_2: undefined,
@@ -104,9 +119,11 @@ const myGameArea = {
     enemyArray: [], //dla potworków
     turretsArray: [],
     enemyInRangeArray: [],
-    money: 99999999999999999,
+    money: 999,
     numberOfEnemy: 5, //ile potworow ma sie pojawic // zalezne od poziomu
     colors: [],
+    numberOfTurret:undefined,
+    presentNumberOfTurret:undefined,
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -188,6 +205,11 @@ const myGameArea = {
         });
         this.drawElement(this.castle.width, this.castle.height, this.castle.img, this.castle.x, this.castle.y); // i pan zamek
         this.buttonsEvents();
+        this.innerTurrets();
+        //wyswietlanie
+        this.castleHealthElement.innerHTML = this.castle.health;
+        this.goldElement.innerHTML = this.money;
+        this.lvlElement.innerHTML = this.lvl;
     },
     buttonsEvents: function () {
         this.buttons.play.addEventListener("click", () => {
@@ -204,6 +226,24 @@ const myGameArea = {
         });
         this.buttons.showTurretRange.addEventListener("click", () => {
             this.showRange();
+        });
+        this.buttons.lifeForCastle.addEventListener("click", ()=>{
+            this.castle.health = this.castle.health+50;
+            this.castleHealthElement.innerHTML = this.castle.health;
+        });
+        this.buttons.previousTurret.addEventListener("click", ()=>{
+            if(this.presentNumberOfTurret != 1){
+                this.presentNumberOfTurret = this.presentNumberOfTurret -1;
+                document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
+                this.innerTurrets();
+            }
+        });
+        this.buttons.nextTurret.addEventListener("click", ()=>{
+          if(this.presentNumberOfTurret != this.numberOfTurret){
+            this.presentNumberOfTurret = this.presentNumberOfTurret +1;
+            document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
+            this.innerTurrets();
+          } 
         });
     },
     showRange: function () {
@@ -227,6 +267,36 @@ const myGameArea = {
                 this.buttons.showTurretRange.innerHTML = "Show Tower Range";
             }
         }
+    },
+    innerTurrets:function(){
+       const turretImg = document.getElementById("imgTurret");
+       const myPresentRange = document.getElementById("MyPresentRange");
+       const myMaxRange = document.getElementById("myMaxRange");
+       const PriceForBetterPower = document.getElementById("PriceForBetterPower");
+       const MyPresentDmg = document.getElementById("MyPresentDmg");
+       const myMaxDmg = document.getElementById("myMaxDmg");
+       const PriceForBetterDmg = document.getElementById("PriceForBetterDmg");
+       const turretContainer = document.getElementById("turret_list");
+       const numberOfTurretsContainer = document.getElementById("numberOfTurrets");
+       if(this.turretsArray.length == 0){
+           turretContainer.style.display = "none";
+           numberOfTurretsContainer.style.display = "none"
+           this.buttons.previousTurret.style.display = "none";
+           this.buttons.nextTurret.style.display = "none";
+       }else{
+        turretContainer.style.display = "flex";
+        numberOfTurretsContainer.style.display = "block";
+        this.buttons.previousTurret.style.display = "block";
+        this.buttons.nextTurret.style.display = "block";
+        turretImg.src = this.turretsArray[this.presentNumberOfTurret -1].img.src;//obecny obrazek wiezy
+        myPresentRange.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].lvl_range;//obecny poziom range mojej wiezy
+        myMaxRange.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].maxLvl;//maksymanly poziom range mojej wiezy
+        PriceForBetterDmg.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].price* this.turretsArray[this.numberOfTurret-1].lvl_DMG;//cena za ulepszenie dmg
+        PriceForBetterPower.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].price*this.turretsArray[this.numberOfTurret-1].lvl_range;//cena za ulepszenie range
+        MyPresentDmg.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].lvl_DMG;//obecny poziom dmg
+        myMaxDmg.innerHTML = this.turretsArray[this.presentNumberOfTurret -1].maxLvl;
+       }
+       console.log(this.numberOfTurret)
     },
     createTurretImg: function (e, turret) {
         const saveMemory = this.clickShowAndHide;
@@ -270,7 +340,6 @@ const myGameArea = {
         this.map.addEventListener("mousemove", position)
         this.clickShowAndHide = 1;
         this.showRange();
-
         function position(e) {
             imageTurret.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
             imageTurret.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
@@ -293,7 +362,7 @@ const myGameArea = {
             let x = Math.floor(e.pageX / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let y = Math.floor(e.pageY / numberOfquad) * myGameArea.oneBox + myGameArea.oneBox / 2;
             let index = myGameArea.turretsArray.length + 1;
-            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price)
+            myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price,turret.lvl_DMG,turret.lvl_range,turret.maxLvl)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
             document.getElementById(imageTurret).remove();
@@ -303,6 +372,17 @@ const myGameArea = {
             console.log(myGameArea.turretsArray)
             myGameArea.startShootLoop(myGameArea.turretsArray.slice(-1)[0]);
             //  console.log(saveMemory)
+            if(myGameArea.turretsArray.length == 1){
+                myGameArea.numberOfTurret = myGameArea.turretsArray.length;
+                myGameArea.presentNumberOfTurret = myGameArea.turretsArray.length;
+                document.getElementById("presentTurret").innerHTML = myGameArea.presentNumberOfTurret;
+                document.getElementById("howMenyTurrets").innerHTML =    myGameArea.numberOfTurret;
+             myGameArea.innerTurrets();
+            }else{
+                myGameArea.numberOfTurret = myGameArea.turretsArray.length;
+                document.getElementById("howMenyTurrets").innerHTML =    myGameArea.numberOfTurret;
+
+            }
             if (saveMemory == undefined) {
                 myGameArea.clickShowAndHide = 1;
                 myGameArea.showRange();
@@ -483,6 +563,7 @@ const myGameArea = {
                 } else if (enemy.move == this.enemypathArray.length) {
                     //potworek dotarl do zamku
                     this.castle.health = this.castle.health - enemy.dmg;
+                    this.castleHealthElement.innerHTML = this.castle.health;
                     if (this.castle.health <= 0) {
                         //jesli zamek ma 0 hp to koniec zabawy
                         window.alert("gameover");
@@ -502,7 +583,7 @@ const myGameArea = {
     },
     loop: function () {
         this.lvl = this.lvl + 1;
-
+        this.lvlElement.innerHTML = this.lvl;
         function text(counter) {
             if (counter > 0) {
                 counter--;
@@ -621,6 +702,7 @@ const myGameArea = {
                 if (e.health <= 0) {
                     this.enemyArray.shift(e);
                     this.money = this.money + e.money;
+                    this.goldElement.innerHTML = this.money;
                 }
                 this.drawEnemy();
                 this.ctx_5.clearRect(object.x, object.y, object.width, object.height)
@@ -644,7 +726,7 @@ const myGameArea = {
             }
         }, 20)
     },
-    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, price, interval) {
+    createTurret: function (width, height, x, y, range, dmg, speed, img, path, index, ammo, price,lvl_DMG,lvl_range,maxLvl, interval) {
         let object = new Object();
         object.width = width;
         object.height = height;
@@ -658,6 +740,9 @@ const myGameArea = {
         object.index = index;
         object.ammo = ammo;
         object.price = price;
+        object.lvl_DMG = lvl_DMG;
+        object.lvl_range = lvl_range;
+        object.maxLvl = maxLvl;
         path.push(object)
     },
     createEnemy: function (width, height, x, y, health, index, move, money, speed, color, dmg, path) {

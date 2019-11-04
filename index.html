@@ -101,13 +101,21 @@
 
                 </li>
                 <li class="buttons">
-                        <button id="buttonPlay">Play</button> 
+                    <div class="buttons_play_mute">
+                            <button class="play_button" id="buttonPlay"> <b> Play</b></button> 
+                            <button id="mute_button" class="mute_button">Mute</button>
+                    </div>
+                 
+                        <div class="container_buttons_volume">
+                                <label class="label_volume" for="volume">Volume</label>
+                            <input class="input_volume" type="range" id="Volume_Button" name="volume"
+                                   min="1" max="10">
+                          </div>
                         <!-- <button id="showTowerRange">Show Tower Range</button> -->
                 </li>
             </ul>
         
         </div>
-
     </div>
 
 
@@ -116,6 +124,11 @@
     <img id="castleImg" class="none" src="img/castle.png" alt="castle">
     <img id="grassImg" class="none" src="img/grass.png" alt="grass">
     <img id="enemyPathImg" class="none" src="img/enemyPath.png" alt="enemyPath">
+    <audio id="Click_Not_Allow" src="sound/ClickInNotAllowPlace.wav" preload="auto"></audio>
+    <audio id="build_Turret" src="sound/buildTurret.wav" preload="auto"></audio>
+    <audio id="Enemy_got_hit" src="sound/EnemyGotHit.wav" preload="auto"></audio>
+    <audio id="Turret_shoot" src="sound/TurretShot.wav" preload="auto"></audio>
+    <audio id="Enemy_move" src="sound/EnemyMove.wav" preload="auto"></audio>
 
     <script src="main.js"></script>
 </body>

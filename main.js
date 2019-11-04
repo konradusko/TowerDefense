@@ -21,6 +21,8 @@ const myGameArea = {
         nextTurret: document.getElementById("nextTurret"),
         add_RangeBTN: document.getElementById("add_Range"),
         add_DmgBTN: document.getElementById("add_Dmg"),
+        change_volume: document.getElementById("Volume_Button"),
+        mute_button: document.getElementById("mute_button"),
 
     },
     castleHealthElement: document.getElementById("castleLife"),
@@ -34,7 +36,7 @@ const myGameArea = {
     PriceForBetterPower: document.getElementById("PriceForBetterPower"),
     PriceForBetterDmg: document.getElementById("PriceForBetterDmg"),
     MyPresentDmg: document.getElementById("MyPresentDmg"),
-    body:document.getElementById("body"),
+    body: document.getElementById("body"),
     castle: {
         width: 160,
         height: 120,
@@ -134,7 +136,15 @@ const myGameArea = {
     colors: [],
     numberOfTurret: undefined,
     presentNumberOfTurret: undefined,
-    allowToBuild:true,
+    allowToBuild: true,
+    sounds: {
+        mute: false,
+        build_Turret: document.getElementById("build_Turret"),
+        click_not_allow: document.getElementById("Click_Not_Allow"),
+        Enemy_got_hit: document.getElementById("Enemy_got_hit"),
+        shoot_audio: document.getElementById("Turret_shoot"),
+        move_audio: document.getElementById("Enemy_move"),
+    },
     start: function () {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = 600;
@@ -204,9 +214,22 @@ const myGameArea = {
             this.grass.x = 0;
             this.grass.y = this.grass.y + this.oneBox;
         }
-        this.grasspathArray.forEach(element => {
-            this.drawElement(element.width, element.height, element.img, element.x, element.y); //rysowanie trawy
-        });
+        let promise = new Promise(function(resolve,reject){
+            let x = 0;
+            myGameArea.grasspathArray.forEach(element => {
+                myGameArea.drawElement(element.width, element.height, element.img, element.x, element.y); //rysowanie trawy
+           x= x+1
+            });
+            if(x == myGameArea.grasspathArray.length){
+                resolve();
+            }
+        })
+        promise.then(()=>{
+            setTimeout(() => {
+                window.alert("Rozplanuj pozycje i wiez obronnych i nacisnij przycisk 'Play'");
+            }, 500);
+
+        })
         this.enemypathArray.forEach(el => {
             this.drawElement(el.width, el.height, el.img, el.x, el.y); //rysowanie sciezki
         });
@@ -214,34 +237,76 @@ const myGameArea = {
         this.buttonsEvents();
         this.innerTurrets();
         //wyswietlanie
-
+        this.buttons.change_volume.value = 0.1;
+        this.sounds.click_not_allow.volume = 0.1;
+        this.sounds.build_Turret.volume = 0.1;
+        this.sounds.Enemy_got_hit.volume =0.1;
+        this.sounds.shoot_audio.volume = 0.1;
+        this.sounds.move_audio.volume = 0.1;
         this.castleHealthElement.innerHTML = this.castle.health;
         this.goldElement.innerHTML = this.money;
         this.lvlElement.innerHTML = this.lvl;
         this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life;
     },
     buttonsEvents: function () {
+        //button play rozpoczyna gre
         this.buttons.play.addEventListener("click", () => {
             this.startGameLoop();
+            this.buttons.play.style.display = "none";
         });
+        //mutowanie dzwieku
+        this.buttons.mute_button.addEventListener("click", () => {
+            if (this.sounds.mute != false) {
+                this.sounds.mute = false;
+                this.buttons.mute_button.innerHTML = "Mute";
+            } else {
+                this.sounds.mute = true;
+                this.buttons.mute_button.innerHTML = "UnMute";
+            }
+        })
+        //zmiana volume
+        this.buttons.change_volume.addEventListener("change", () => {
+            let value = this.buttons.change_volume.value;
+            console.log(value / 10)
+            this.sounds.click_not_allow.volume = value / 10;
+            this.sounds.build_Turret.volume = value/10;
+            this.sounds.Enemy_got_hit.volume = value/10;
+            this.sounds.shoot_audio.volume = value/10;
+            this.sounds.move_audio.volume = value/10;
+        })
+        //budowanie wiezy nr 1
         this.buttons.turretOneButton.addEventListener("click", (e) => {
-            if(this.money >= this.turretOne.price && this.allowToBuild == true){
+            if (this.money >= this.turretOne.price && this.allowToBuild == true) {
                 this.createTurretImg(e, this.turretOne);
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
-       
+
         });
+        // budowanie wiezy nr2
         this.buttons.turretTwoButton.addEventListener("click", (e) => {
-            if(this.money >= this.turretTwo.price && this.allowToBuild == true){
+            if (this.money >= this.turretTwo.price && this.allowToBuild == true) {
                 this.createTurretImg(e, this.turretTwo);
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
         });
+        //budowanie wiezy nr 3
         this.buttons.turretThreeButton.addEventListener("click", (e) => {
-            if(this.money >= this.turretThree.price && this.allowToBuild == true){
+            if (this.money >= this.turretThree.price && this.allowToBuild == true) {
                 this.createTurretImg(e, this.turretThree);
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
 
         });
-
+        // dodaje 50 hp panu zamkowi
         this.buttons.lifeForCastle.addEventListener("click", () => {
             console.log(this.castle.price_for_better_life * this.castle.lvl_health)
             if (this.money >= this.castle.price_for_better_life * this.castle.lvl_health) {
@@ -252,23 +317,38 @@ const myGameArea = {
                 this.castle.lvl_health = this.castle.lvl_health + 1;
                 this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life * this.castle.lvl_health;
                 console.log(this.castle.price_for_better_life * this.castle.lvl_health)
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
 
         });
+        //poprzednia wieza w menu do ulepszania
         this.buttons.previousTurret.addEventListener("click", () => {
-            if (this.presentNumberOfTurret != 1) {
+            if (this.presentNumberOfTurret != 1 && this.allowToBuild == true) {
                 this.presentNumberOfTurret = this.presentNumberOfTurret - 1;
                 document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
                 this.innerTurrets(this.turretsArray[this.presentNumberOfTurret - 1]);
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
         });
+        //nastepna wieza w menu do ulepszania
         this.buttons.nextTurret.addEventListener("click", () => {
-            if (this.presentNumberOfTurret != this.numberOfTurret) {
+            if (this.presentNumberOfTurret != this.numberOfTurret && this.allowToBuild == true) {
                 this.presentNumberOfTurret = this.presentNumberOfTurret + 1;
                 document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
                 this.innerTurrets(this.turretsArray[this.presentNumberOfTurret - 1]);
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
         });
+        //pokazuje wieze na mapie oraz jej zasieg
         this.buttons.turretRangeAndPosition.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
             let border = document.createElement("div");
@@ -296,9 +376,10 @@ const myGameArea = {
                 document.getElementById(background).remove();
             }, 5000);
         });
+        //zwieksza zasieg wiezy
         this.buttons.add_RangeBTN.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
-            if (this.money >= Turret.price * Turret.lvl_range && Turret.lvl_range < Turret.maxLvl) {
+            if (this.money >= Turret.price * Turret.lvl_range && Turret.lvl_range < Turret.maxLvl && this.allowToBuild == true) {
                 Turret.range = Turret.range + this.oneBox;
                 this.money = this.money - Turret.price * Turret.lvl_range;
                 Turret.lvl_range = Turret.lvl_range + 1;
@@ -310,9 +391,10 @@ const myGameArea = {
                 }
             }
         });
+        //zwieksza dmg wiezy
         this.buttons.add_DmgBTN.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
-            if (this.money >= Turret.price * Turret.lvl_DMG && Turret.lvl_DMG < Turret.maxLvl) {
+            if (this.money >= Turret.price * Turret.lvl_DMG && Turret.lvl_DMG < Turret.maxLvl && this.allowToBuild == true) {
                 console.log(Turret)
                 Turret.dmg = Turret.dmg + 5; // o 5 zwiekszam dmg
                 console.log(this.turretsArray)
@@ -324,10 +406,10 @@ const myGameArea = {
                 if (Turret.lvl_DMG == Turret.maxLvl) {
                     this.box_BetterDMG.style.display = "none";
                 }
-
             }
         })
     },
+    //wyswietla wieze w menu
     innerTurrets: function (Turret) {
         const myMaxRange = document.getElementById("myMaxRange");
         const myMaxDmg = document.getElementById("myMaxDmg");
@@ -362,13 +444,14 @@ const myGameArea = {
             myMaxDmg.innerHTML = Turret.maxLvl;
         }
     },
+    //tworzy nam wieze ktora mozemy postawic
     createTurretImg: function (e, turret) {
         this.allowToBuild = false;
         let numberOfquad = myGameArea.oneBox;
         let imageTurret = document.createElement("img");
         let border = document.createElement("div");
         let background = document.createElement("div");
-        const your_turrets_container =   document.getElementById("your_turrets");
+        const your_turrets_container = document.getElementById("your_turrets");
         const deleteTurret = document.getElementById("DeleteTurretFromMouse");
         background.style.position = "absolute";
         background.style.width = turret.width + this.oneBox + "px";
@@ -404,9 +487,10 @@ const myGameArea = {
         this.map.append(imageTurret, border, background);
         this.map.addEventListener("mousemove", position)
         your_turrets_container.style.display = "none";
-       deleteTurret.style.display = "flex";
-       previousTurret.style.display = "none"
-       nextTurret.style.display = "none"
+        deleteTurret.style.display = "flex";
+        previousTurret.style.display = "none"
+        nextTurret.style.display = "none"
+        //sprawdza czy mozemy tu budowac
         function position(e) {
             imageTurret.style.left = Math.floor(e.pageX / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
             imageTurret.style.top = Math.floor(e.pageY / numberOfquad) * numberOfquad + numberOfquad / 2 + "px";
@@ -420,27 +504,29 @@ const myGameArea = {
                 myGameArea.map.addEventListener("click", removeAndBuild) //mozna budowac
             } else {
                 background.style.background = "red";
-                myGameArea.body.addEventListener("click", Remove )
+                myGameArea.body.addEventListener("click", Remove)
                 myGameArea.map.removeEventListener("click", removeAndBuild); //nie mozna budowac
             }
         }
-        function Remove(e){
-       if(e.target.id == "DeleteTurretFromMouse" || e.target.classList == "auto"){
-        your_turrets_container.style.display = "block";
-        deleteTurret.style.display = "none";
-       if(myGameArea.turretsArray.length > 0){
-        previousTurret.style.display = "block"
-     nextTurret.style.display = "block"
-    }
-    myGameArea.allowToBuild = true;
-        document.getElementById("imageTurret").remove();
-        document.getElementById("border").remove();
-        document.getElementById("background").remove();
-        myGameArea.map.removeEventListener("mousemove", position);
-        myGameArea.map.removeEventListener("click", removeAndBuild);
-        myGameArea.body.removeEventListener("click", Remove )
-       }
+        //jak zrezygnujemy z budowy
+        function Remove(e) {
+            if (e.target.id == "DeleteTurretFromMouse" || e.target.classList == "auto") {
+                your_turrets_container.style.display = "block";
+                deleteTurret.style.display = "none";
+                if (myGameArea.turretsArray.length > 0) {
+                    previousTurret.style.display = "block"
+                    nextTurret.style.display = "block"
+                }
+                myGameArea.allowToBuild = true;
+                document.getElementById("imageTurret").remove();
+                document.getElementById("border").remove();
+                document.getElementById("background").remove();
+                myGameArea.map.removeEventListener("mousemove", position);
+                myGameArea.map.removeEventListener("click", removeAndBuild);
+                myGameArea.body.removeEventListener("click", Remove)
+            }
         }
+        //buduje
         function removeAndBuild(e) {
             console.log("dzieje sie")
             myGameArea.allowToBuild = true;
@@ -454,7 +540,7 @@ const myGameArea = {
             myGameArea.createTurret(turret.width, turret.height, x, y, turret.range, turret.dmg, turret.speed, turret.img, myGameArea.turretsArray, index, turret.color_ammo, turret.price, turret.lvl_DMG, turret.lvl_range, turret.maxLvl)
             myGameArea.map.removeEventListener("mousemove", position);
             myGameArea.map.removeEventListener("click", removeAndBuild);
-            myGameArea.body.removeEventListener("click", Remove )
+            myGameArea.body.removeEventListener("click", Remove)
             document.getElementById("imageTurret").remove();
             document.getElementById("border").remove();
             document.getElementById("background").remove();
@@ -462,8 +548,11 @@ const myGameArea = {
             console.log(myGameArea.turretsArray)
             myGameArea.startShootLoop(myGameArea.turretsArray.slice(-1)[0]);
             myGameArea.money = myGameArea.money - turret.price;
-            myGameArea.goldElement.innerHTML =  myGameArea.money;
+            myGameArea.goldElement.innerHTML = myGameArea.money;
             //  console.log(saveMemory)
+            if (myGameArea.sounds.mute == false) {
+                myGameArea.sounds.build_Turret.play();
+            }
             if (myGameArea.turretsArray.length == 1) {
                 myGameArea.numberOfTurret = myGameArea.turretsArray.length;
                 myGameArea.presentNumberOfTurret = myGameArea.turretsArray.length;
@@ -476,7 +565,7 @@ const myGameArea = {
 
             }
         }
-
+        //oblicza czy mozemy tutaj budowac
         function ifIcanBuildHereTurret(e) {
             let bol = true;
             let clickX = Math.floor(e.pageX / numberOfquad); // pozycja myszki wzgledem osi X jaka kratka
@@ -643,6 +732,9 @@ const myGameArea = {
                         enemy.x = this.enemypathArray[enemy.move].x + (this.oneBox - enemy.width) / 2;
                         enemy.y = this.enemypathArray[enemy.move].y + (this.oneBox - enemy.height) / 2;
                         enemy.move = enemy.move + 1;
+                        if (this.sounds.mute == false) {
+                            this.sounds.move_audio.play();
+                        }
                         this.drawEnemy();
                     }
                 } else if (enemy.move == this.enemypathArray.length) {
@@ -652,6 +744,7 @@ const myGameArea = {
                     if (this.castle.health <= 0) {
                         //jesli zamek ma 0 hp to koniec zabawy
                         window.alert("gameover");
+                        location.reload();
                     }
                     this.enemyArray.shift(enemy);
                     this.drawEnemy();
@@ -689,7 +782,7 @@ const myGameArea = {
         text(6);
     },
     startShootLoop: function (Turret) {
-       // console.log(this.turretsArray);
+        // console.log(this.turretsArray);
         Turret.interval = setInterval(() => {
             this.turretShoot(Turret);
         }, Turret.speed)
@@ -704,11 +797,13 @@ const myGameArea = {
                     enemy.y >= TopLeftY && enemy.y <= TopLeftY + T.height + this.oneBox + T.range * 2) {
                     if (enemy.x >= 0) { // czy enemy jeszcze nie jest poza mapa
                         if (bol == true) {
+                            if (this.sounds.mute == false) {
+                                this.sounds.shoot_audio.play();
+                            }
                             this.animateShoot(enemy, T);
                             bol = false;
                         }
                     }
-
                 }
             })
         }
@@ -786,6 +881,9 @@ const myGameArea = {
             if (Math.floor(object.x / this.oneBox) == Math.floor(object.EndPointX / this.oneBox) &&
                 Math.floor(object.y / this.oneBox) == Math.floor(object.EndPointaY / this.oneBox)) {
                 e.health = e.health - w.dmg;
+                if (this.sounds.mute == false) {
+                    this.sounds.Enemy_got_hit.play();
+                }
                 if (e.health <= 0) {
                     this.enemyArray.shift(e);
                     this.money = this.money + e.money;

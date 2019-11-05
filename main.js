@@ -243,7 +243,7 @@ const myGameArea = {
         this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life;
         promise.then(() => {
             setTimeout(() => {
-                window.alert("Rozplanuj pozycje i wiez obronnych i nacisnij przycisk 'Play'");
+                window.alert("Build your defense turrets and press'Play'");
                 this.buttonsEvents();
             }, 500);
 
@@ -777,7 +777,7 @@ const myGameArea = {
                     if (this.castle.health <= 0) {
                         //jesli zamek ma 0 hp to koniec zabawy
                         this.enemyArray = [];
-                        window.alert("gameover");
+                        window.alert("GameOver");
 
                         location.reload();
                     }
@@ -812,7 +812,7 @@ const myGameArea = {
                 myGameArea.ctx_6.font = "40px Comic Sans MS";
                 myGameArea.ctx_6.fillStyle = "crimson";
                 myGameArea.ctx_6.textAlign = "center";
-                myGameArea.ctx_6.fillText("Następna fala złych kwadratów za " + counter, myGameArea.canvas_6.width / 2, myGameArea.canvas_6.height / 2);
+                myGameArea.ctx_6.fillText("Bad squares appear behind " + counter, myGameArea.canvas_6.width / 2, myGameArea.canvas_6.height / 2);
                 setTimeout(() => {
                     myGameArea.ctx_6.clearRect(0, 0, myGameArea.canvas_6.width, myGameArea.canvas_6.height);
                     text(counter);

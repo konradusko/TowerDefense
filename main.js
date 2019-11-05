@@ -73,7 +73,7 @@ const myGameArea = {
         health: 100,
         move: 0,
         index: 1,
-        money: 0,
+        money: 5,
         speed: 1200,
         color: "black",
         dmg: 5,
@@ -88,10 +88,10 @@ const myGameArea = {
         speed: 1200,
         img: document.getElementById("wiezaImg"),
         color_ammo: "red",
-        price: 50,
+        price: 500,
         lvl_DMG: 1, //poziom ulepszenia  dmg
         lvl_range: 1, // poziom ulepszenia range
-        maxLvl: 3,
+        maxLvl: 4,
     },
     turretTwo: {
         x: 0,
@@ -100,13 +100,13 @@ const myGameArea = {
         height: 80,
         range: 80,
         dmg: 60,
-        speed: 800,
+        speed: 900,
         img: document.getElementById("wiezaImg2"),
         color_ammo: "blue",
-        price: 150,
-        lvl_DMG: 3, //poziom ulepszenia  dmg
-        lvl_range: 3, // poziom ulepszenia range
-        maxLvl: 3,
+        price: 2000,
+        lvl_DMG: 1, //poziom ulepszenia  dmg
+        lvl_range: 1, // poziom ulepszenia range
+        maxLvl: 5,
     },
     turretThree: {
         x: 0,
@@ -115,24 +115,24 @@ const myGameArea = {
         height: 120,
         range: 120,
         dmg: 90,
-        speed: 500,
+        speed: 700,
         img: document.getElementById("wiezaImg3"),
         color_ammo: "purple",
-        price: 250,
+        price: 9000,
         lvl_DMG: 1, //poziom ulepszenia  dmg
         lvl_range: 1, // poziom ulepszenia range
-        maxLvl: 4,
+        maxLvl: 3,
     },
     interval: undefined,
     interval_2: undefined,
-    lvl: 35,
+    lvl: 1,
     enemypathArray: [], //scieżka dla przeciwników array
     grasspathArray: [],
     enemyArray: [], //dla potworków
     turretsArray: [],
     enemyInRangeArray: [],
-    money: 999999,
-    numberOfEnemy: 5, //ile potworow ma sie pojawic // zalezne od poziomu
+    money: 1700,
+    numberOfEnemy: 10, //ile potworow ma sie pojawic // zalezne od poziomu
     colors: [],
     numberOfTurret: undefined,
     presentNumberOfTurret: undefined,
@@ -144,6 +144,7 @@ const myGameArea = {
         Enemy_got_hit: document.getElementById("Enemy_got_hit"),
         shoot_audio: document.getElementById("Turret_shoot"),
         move_audio: document.getElementById("Enemy_move"),
+        Castle_got_hit: document.getElementById("Castle_got_hit")
     },
     start: function () {
         this.ctx = this.canvas.getContext("2d");
@@ -198,12 +199,11 @@ const myGameArea = {
             this.createElement(this.enemyPath.width, this.enemyPath.height, this.enemyPath.x, this.enemyPath.y, this.enemyPath.img, this.enemypathArray);
             this.enemyPath.x = this.enemyPath.x - this.oneBox;
         };
-        console.log(this.enemypathArray)
         this.number.width = this.canvas.width / this.oneBox; //ile kratek szerokosci
         this.number.height = this.canvas.height / this.oneBox //ile kratek wysokosci
-        console.log(this.number)
         this.drawMap(this.number.width, this.number.height); //rysowanie
     },
+
     drawMap: function (w, h) {
         //tworzenie elementow trawy pod budowe wiezy
         for (let j = 0; j < h; j++) {
@@ -214,39 +214,40 @@ const myGameArea = {
             this.grass.x = 0;
             this.grass.y = this.grass.y + this.oneBox;
         }
-        let promise = new Promise(function(resolve,reject){
+        let promise = new Promise(function (resolve, reject) {
             let x = 0;
             myGameArea.grasspathArray.forEach(element => {
                 myGameArea.drawElement(element.width, element.height, element.img, element.x, element.y); //rysowanie trawy
-           x= x+1
+                x = x + 1
             });
-            if(x == myGameArea.grasspathArray.length){
+            if (x == myGameArea.grasspathArray.length) {
                 resolve();
             }
-        })
-        promise.then(()=>{
-            setTimeout(() => {
-                window.alert("Rozplanuj pozycje i wiez obronnych i nacisnij przycisk 'Play'");
-            }, 500);
-
         })
         this.enemypathArray.forEach(el => {
             this.drawElement(el.width, el.height, el.img, el.x, el.y); //rysowanie sciezki
         });
         this.drawElement(this.castle.width, this.castle.height, this.castle.img, this.castle.x, this.castle.y); // i pan zamek
-        this.buttonsEvents();
         this.innerTurrets();
         //wyswietlanie
         this.buttons.change_volume.value = 0.1;
         this.sounds.click_not_allow.volume = 0.1;
         this.sounds.build_Turret.volume = 0.1;
-        this.sounds.Enemy_got_hit.volume =0.1;
+        this.sounds.Enemy_got_hit.volume = 0.1;
         this.sounds.shoot_audio.volume = 0.1;
         this.sounds.move_audio.volume = 0.1;
+        this.sounds.Castle_got_hit.volume = 0.1;
         this.castleHealthElement.innerHTML = this.castle.health;
         this.goldElement.innerHTML = this.money;
         this.lvlElement.innerHTML = this.lvl;
         this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life;
+        promise.then(() => {
+            setTimeout(() => {
+                window.alert("Rozplanuj pozycje i wiez obronnych i nacisnij przycisk 'Play'");
+                this.buttonsEvents();
+            }, 500);
+
+        })
     },
     buttonsEvents: function () {
         //button play rozpoczyna gre
@@ -267,12 +268,28 @@ const myGameArea = {
         //zmiana volume
         this.buttons.change_volume.addEventListener("change", () => {
             let value = this.buttons.change_volume.value;
-            console.log(value / 10)
             this.sounds.click_not_allow.volume = value / 10;
-            this.sounds.build_Turret.volume = value/10;
-            this.sounds.Enemy_got_hit.volume = value/10;
-            this.sounds.shoot_audio.volume = value/10;
-            this.sounds.move_audio.volume = value/10;
+            this.sounds.build_Turret.volume = value / 10;
+            this.sounds.Enemy_got_hit.volume = value / 10;
+            this.sounds.shoot_audio.volume = value / 10;
+            this.sounds.move_audio.volume = value / 10;
+            this.sounds.Castle_got_hit.volume = value / 10;
+        })
+        //wieza na mapie
+        window.addEventListener("click", (e) => {
+            let x = Math.floor(e.pageX / this.oneBox);
+            let y = Math.floor(e.pageY / this.oneBox);
+            this.turretsArray.forEach(turret => {
+                if (x >= Math.floor(turret.x / this.oneBox) && x <= Math.floor((turret.x + turret.width) / this.oneBox) &&
+                    y >= Math.floor(turret.y / this.oneBox) && y <= Math.floor((turret.y + turret.height) / this.oneBox)) {
+                    this.presentNumberOfTurret = turret.index;
+                    this.numberOfTurret = this.turretsArray.length;
+                    this.show();
+                    this.innerTurrets(this.turretsArray[turret.index - 1])
+                    document.getElementById("presentTurret").innerHTML = this.presentNumberOfTurret;
+                    document.getElementById("howMenyTurrets").innerHTML = this.numberOfTurret;
+                }
+            });
         })
         //budowanie wiezy nr 1
         this.buttons.turretOneButton.addEventListener("click", (e) => {
@@ -308,7 +325,6 @@ const myGameArea = {
         });
         // dodaje 50 hp panu zamkowi
         this.buttons.lifeForCastle.addEventListener("click", () => {
-            console.log(this.castle.price_for_better_life * this.castle.lvl_health)
             if (this.money >= this.castle.price_for_better_life * this.castle.lvl_health) {
                 this.castle.health = this.castle.health + 50;
                 this.castleHealthElement.innerHTML = this.castle.health;
@@ -316,7 +332,6 @@ const myGameArea = {
                 this.goldElement.innerHTML = this.money;
                 this.castle.lvl_health = this.castle.lvl_health + 1;
                 this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life * this.castle.lvl_health;
-                console.log(this.castle.price_for_better_life * this.castle.lvl_health)
             } else {
                 if (this.sounds.mute == false) {
                     this.sounds.click_not_allow.play();
@@ -350,64 +365,73 @@ const myGameArea = {
         });
         //pokazuje wieze na mapie oraz jej zasieg
         this.buttons.turretRangeAndPosition.addEventListener("click", () => {
-            let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
-            let border = document.createElement("div");
-            let background = document.createElement("div");
-            border.style.position = "absolute";
-            border.style.border = "2px solid red";
-            border.style.paddingTop = Turret.range + "px";
-            border.style.paddingBottom = Turret.range + Turret.height + this.oneBox + "px";
-            border.style.paddingLeft = Turret.range + "px";
-            border.style.paddingRight = Turret.range + Turret.width + this.oneBox + "px";
-            border.style.left = Turret.x - this.oneBox / 2 - Turret.range + "px";
-            border.style.top = Turret.y - this.oneBox / 2 - Turret.range + "px";
-            border.id = border;
-            background.style.position = "absolute";
-            background.style.width = Turret.width + this.oneBox + "px";
-            background.style.height = Turret.height + this.oneBox + "px";
-            background.style.background = "purple";
-            background.style.opacity = .8;
-            background.id = background;
-            background.style.left = Turret.x - this.oneBox / 2 + "px";
-            background.style.top = Turret.y - this.oneBox / 2 + "px";
-            this.map.append(border, background);
-            setTimeout(() => {
-                document.getElementById(border).remove();
-                document.getElementById(background).remove();
-            }, 5000);
+            this.show();
         });
         //zwieksza zasieg wiezy
         this.buttons.add_RangeBTN.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
-            if (this.money >= Turret.price * Turret.lvl_range && Turret.lvl_range < Turret.maxLvl && this.allowToBuild == true) {
+            if (this.money >= Turret.price * Turret.lvl_range * (Turret.maxLvl + 3) && Turret.lvl_range < Turret.maxLvl && this.allowToBuild == true) {
                 Turret.range = Turret.range + this.oneBox;
-                this.money = this.money - Turret.price * Turret.lvl_range;
+                this.money = this.money - Turret.price * Turret.lvl_range * (Turret.maxLvl + 3);
                 Turret.lvl_range = Turret.lvl_range + 1;
-                this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range;
+                this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range * (Turret.maxLvl + 3);
                 this.goldElement.innerHTML = this.money;
                 this.myPresentRange.innerHTML = Turret.lvl_range
                 if (Turret.lvl_range == Turret.maxLvl) {
                     this.box_betterRange.style.display = "none";
+                }
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
                 }
             }
         });
         //zwieksza dmg wiezy
         this.buttons.add_DmgBTN.addEventListener("click", () => {
             let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
-            if (this.money >= Turret.price * Turret.lvl_DMG && Turret.lvl_DMG < Turret.maxLvl && this.allowToBuild == true) {
-                console.log(Turret)
-                Turret.dmg = Turret.dmg + 5; // o 5 zwiekszam dmg
-                console.log(this.turretsArray)
-                this.money = this.money - Turret.price * Turret.lvl_DMG;
+            if (this.money >= Turret.price * Turret.lvl_DMG * (Turret.maxLvl + 3) && Turret.lvl_DMG < Turret.maxLvl && this.allowToBuild == true) {
+                Turret.dmg = Turret.dmg + 10; // o 10 zwiekszam dmg
+                this.money = this.money - Turret.price * Turret.lvl_DMG * (Turret.maxLvl + 3);
                 Turret.lvl_DMG = Turret.lvl_DMG + 1;
-                this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG;
+                this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG * (Turret.maxLvl + 3);
                 this.goldElement.innerHTML = this.money;
                 this.MyPresentDmg.innerHTML = Turret.lvl_DMG;
                 if (Turret.lvl_DMG == Turret.maxLvl) {
                     this.box_BetterDMG.style.display = "none";
                 }
+            } else {
+                if (this.sounds.mute == false) {
+                    this.sounds.click_not_allow.play();
+                }
             }
         })
+    },
+    show: function () {
+        let Turret = this.turretsArray[this.presentNumberOfTurret - 1];
+        let border = document.createElement("div");
+        let background = document.createElement("div");
+        border.style.position = "absolute";
+        border.style.border = "2px solid red";
+        border.style.paddingTop = Turret.range + "px";
+        border.style.paddingBottom = Turret.range + Turret.height + this.oneBox + "px";
+        border.style.paddingLeft = Turret.range + "px";
+        border.style.paddingRight = Turret.range + Turret.width + this.oneBox + "px";
+        border.style.left = Turret.x - this.oneBox / 2 - Turret.range + "px";
+        border.style.top = Turret.y - this.oneBox / 2 - Turret.range + "px";
+        border.id = border;
+        background.style.position = "absolute";
+        background.style.width = Turret.width + this.oneBox + "px";
+        background.style.height = Turret.height + this.oneBox + "px";
+        background.style.background = "purple";
+        background.style.opacity = .8;
+        background.id = background;
+        background.style.left = Turret.x - this.oneBox / 2 + "px";
+        background.style.top = Turret.y - this.oneBox / 2 + "px";
+        this.map.append(border, background);
+        setTimeout(() => {
+            document.getElementById(border).remove();
+            document.getElementById(background).remove();
+        }, 5000);
     },
     //wyswietla wieze w menu
     innerTurrets: function (Turret) {
@@ -438,8 +462,8 @@ const myGameArea = {
             this.buttons.turretRangeAndPosition.src = Turret.img.src; //obecny obrazek wiezy
             this.myPresentRange.innerHTML = Turret.lvl_range; //obecny poziom range mojej wiezy
             myMaxRange.innerHTML = Turret.maxLvl; //maksymanly poziom range mojej wiezy
-            this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG; //cena za ulepszenie dmg
-            this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range; //cena za ulepszenie range
+            this.PriceForBetterDmg.innerHTML = Turret.price * Turret.lvl_DMG * (Turret.maxLvl + 3); //cena za ulepszenie dmg
+            this.PriceForBetterPower.innerHTML = Turret.price * Turret.lvl_range * (Turret.maxLvl + 3); //cena za ulepszenie range
             this.MyPresentDmg.innerHTML = Turret.lvl_DMG; //obecny poziom dmg
             myMaxDmg.innerHTML = Turret.maxLvl;
         }
@@ -528,7 +552,6 @@ const myGameArea = {
         }
         //buduje
         function removeAndBuild(e) {
-            console.log("dzieje sie")
             myGameArea.allowToBuild = true;
             your_turrets_container.style.display = "block";
             deleteTurret.style.display = "none";
@@ -545,24 +568,11 @@ const myGameArea = {
             document.getElementById("border").remove();
             document.getElementById("background").remove();
             myGameArea.ctx_3.drawImage(turret.img, x, y, turret.width, turret.height);
-            console.log(myGameArea.turretsArray)
             myGameArea.startShootLoop(myGameArea.turretsArray.slice(-1)[0]);
             myGameArea.money = myGameArea.money - turret.price;
             myGameArea.goldElement.innerHTML = myGameArea.money;
-            //  console.log(saveMemory)
             if (myGameArea.sounds.mute == false) {
                 myGameArea.sounds.build_Turret.play();
-            }
-            if (myGameArea.turretsArray.length == 1) {
-                myGameArea.numberOfTurret = myGameArea.turretsArray.length;
-                myGameArea.presentNumberOfTurret = myGameArea.turretsArray.length;
-                document.getElementById("presentTurret").innerHTML = myGameArea.presentNumberOfTurret;
-                document.getElementById("howMenyTurrets").innerHTML = myGameArea.numberOfTurret;
-                myGameArea.innerTurrets(myGameArea.turretsArray[myGameArea.presentNumberOfTurret - 1]);
-            } else {
-                myGameArea.numberOfTurret = myGameArea.turretsArray.length;
-                document.getElementById("howMenyTurrets").innerHTML = myGameArea.numberOfTurret;
-
             }
         }
         //oblicza czy mozemy tutaj budowac
@@ -576,7 +586,6 @@ const myGameArea = {
             //czy po za mapa ktos sie bez zezwolenia nie buduje
             if (clickX + turretWidth >= myGameArea.number.width ||
                 clickY + turretHeight >= myGameArea.number.height) {
-                // console.log("budowanie po za mapa nie dozwolone klaunie")
                 bol = false;
             }
             // czy dla sciezce dla potworków wielki pan wladca nie stawia wiezy
@@ -618,86 +627,108 @@ const myGameArea = {
         this.enemyOne.index = 1; //globalne zawsze tyle samo wynosza
         // this.enemyOne.speed = this.enemyOne.speed; 
         //speed co 5 lvli
+        //speed max 500
         if (this.lvl <= 10) {
             switch (this.lvl) {
                 case 2:
                     this.numberOfEnemy = this.numberOfEnemy + 2;
                     this.enemyOne.color = "Brown";
-                    this.enemyOne.money = this.enemyOne.money + 5;
+                    this.enemyOne.money = this.enemyOne.money + 1;
                     this.enemyOne.health = this.enemyOne.health + 2;
                     break;
                 case 3:
                     this.numberOfEnemy = this.numberOfEnemy + 1;
                     this.enemyOne.color = "DarkOliveGreen";
-                    this.enemyOne.money = this.enemyOne.money + 7;
+                    this.enemyOne.money = this.enemyOne.money + 1;
                     this.enemyOne.health = this.enemyOne.health + 3;
                     break;
                 case 4:
-                    this.numberOfEnemy = this.numberOfEnemy + 4;
+                    this.numberOfEnemy = this.numberOfEnemy + 6;
                     this.enemyOne.color = "DarkTurquoise ";
-                    this.enemyOne.money = this.enemyOne.money + 1;
-                    this.enemyOne.health = this.enemyOne.health + 3;
+                    this.enemyOne.money = this.enemyOne.money + 2;
+                    this.enemyOne.health = this.enemyOne.health + 7;
                     break;
                 case 5:
                     this.numberOfEnemy = this.numberOfEnemy + 3;
                     this.enemyOne.color = "FloralWhite ";
-                    this.enemyOne.speed = this.enemyOne.speed - 70;
+                    this.enemyOne.speed = this.enemyOne.speed - 50;
                     this.enemyOne.money = this.enemyOne.money + 10;
                     this.enemyOne.health = this.enemyOne.health + 10;
                     break;
                 case 6:
                     this.numberOfEnemy = this.numberOfEnemy + 2;
                     this.enemyOne.color = "GoldenRod ";
-                    this.enemyOne.money = this.enemyOne.money + 5;
-                    this.enemyOne.health = this.enemyOne.health + 2;
+                    this.enemyOne.money = this.enemyOne.money + 1;
+                    this.enemyOne.health = this.enemyOne.health + 5;
                     break;
                 case 7:
-                    this.numberOfEnemy = this.numberOfEnemy + 1;
+                    this.numberOfEnemy = this.numberOfEnemy + 4;
                     this.enemyOne.color = "HotPink";
-                    this.enemyOne.money = this.enemyOne.money + 7;
+                    this.enemyOne.money = this.enemyOne.money + 1;
                     this.enemyOne.health = this.enemyOne.health + 3;
                     break;
                 case 8:
                     this.numberOfEnemy = this.numberOfEnemy + 1;
                     this.enemyOne.color = "LightSeaGreen";
                     this.enemyOne.money = this.enemyOne.money + 1;
-                    this.enemyOne.health = this.enemyOne.health + 3;
+                    this.enemyOne.health = this.enemyOne.health + 5;
                     break;
                 case 9:
-                    this.numberOfEnemy = this.numberOfEnemy + 1;
+                    this.numberOfEnemy = this.numberOfEnemy + 5;
                     this.enemyOne.color = "Sienna";
                     this.enemyOne.money = this.enemyOne.money + 1;
-                    this.enemyOne.health = this.enemyOne.health + 3;
+                    this.enemyOne.health = this.enemyOne.health + 5;
                     break;
-                    // case 10:
-                    //     this.numberOfEnemy = this.numberOfEnemy + 3;
-                    //     this.enemyOne.color = "Peru";
-                    //     this.enemyOne.speed = this.enemyOne.speed - 70;
-                    //     this.enemyOne.money = this.enemyOne.money + 10;
-                    //     this.enemyOne.health = this.enemyOne.health + 10;
-                    //     this.enemyOne.dmg = this.enemyOne.dmg + 5;
-                    //     break;
+                case 10:
+                    this.numberOfEnemy = this.numberOfEnemy + 7;
+                    this.enemyOne.color = "Peru";
+                    this.enemyOne.speed = this.enemyOne.speed - 300;
+                    this.enemyOne.money = this.enemyOne.money + 2;
+                    this.enemyOne.health = this.enemyOne.health + 10;
+                    this.enemyOne.dmg = this.enemyOne.dmg + 5;
+                    break;
             }
         } else if (this.lvl < 20) {
+            if (this.lvl == 20) {
+                this.enemyOne.speed = this.enemyOne.speed - 200;
+                this.enemyOne.health = this.enemyOne.health + 60;
+            }
             this.colors = [];
             for (let i = 0; i <= 3; i++) {
                 this.backgroundGenerator();
             }
+            this.numberOfEnemy = this.numberOfEnemy + 16;
+            this.enemyOne.money = this.enemyOne.money + 1;
+            this.enemyOne.health = this.enemyOne.health + 32;
+            this.enemyOne.dmg = this.enemyOne.dmg + 3;
             this.enemyOne.color = "gradient";
+
         } else if (this.lvl < 30) {
+            if (this.lvl == 30) {
+                this.enemyOne.speed = this.enemyOne.speed - 150;
+                this.enemyOne.money = this.enemyOne.money - 20;
+            }
             this.colors = [];
             for (let i = 0; i <= 5; i++) {
                 this.backgroundGenerator();
             }
+            this.numberOfEnemy = this.numberOfEnemy + 20;
+            this.enemyOne.health = this.enemyOne.health + 55;
+            this.enemyOne.dmg = this.enemyOne.dmg + 1;
             this.enemyOne.color = "gradient_2";
         } else if (this.lvl > 30) {
+            if (this.lvl == 50) {
+                this.enemyOne.speed = this.enemyOne.speed - 150
+            }
             this.colors = [];
             for (let i = 0; i <= 10; i++) {
                 this.backgroundGenerator();
             }
             this.enemyOne.color = "gradient_3";
+            this.numberOfEnemy = this.numberOfEnemy + 30;
+            this.enemyOne.health = this.enemyOne.health + 65;
+            this.enemyOne.dmg = this.enemyOne.dmg + 2;
         }
-        //  console.log(this.colors)
         this.startGameLoop();
     },
     backgroundGenerator: function () {
@@ -713,7 +744,6 @@ const myGameArea = {
             this.enemyOne.x = this.enemyOne.x - this.oneBox; // kazdy kolejny jest odsuniety od siebie
             this.enemyOne.index = this.enemyOne.index + 1;
         }
-        console.log(this.enemyArray);
         //tworzy nam to potworki ktore ide do zamku 
         this.interval = setInterval(() => {
             this.enemyMove();
@@ -740,10 +770,15 @@ const myGameArea = {
                 } else if (enemy.move == this.enemypathArray.length) {
                     //potworek dotarl do zamku
                     this.castle.health = this.castle.health - enemy.dmg;
+                    if (this.sounds.mute == false) {
+                        this.sounds.Castle_got_hit.play();
+                    }
                     this.castleHealthElement.innerHTML = this.castle.health;
                     if (this.castle.health <= 0) {
                         //jesli zamek ma 0 hp to koniec zabawy
+                        this.enemyArray = [];
                         window.alert("gameover");
+
                         location.reload();
                     }
                     this.enemyArray.shift(enemy);
@@ -762,7 +797,14 @@ const myGameArea = {
     loop: function () {
         this.lvl = this.lvl + 1;
         this.lvlElement.innerHTML = this.lvl;
-        this.castle.health = this.castle.health + 2 * this.lvl;
+        if (this.lvl < 20) {
+            this.castle.health = this.castle.health + 2 * this.lvl;
+            this.castleHealthElement.innerHTML = this.castle.health;
+        }
+        if (this.lvl < 10) {
+            this.money = this.money + 50;
+            this.goldElement.innerHTML = this.money;
+        }
 
         function text(counter) {
             if (counter > 0) {
@@ -782,7 +824,6 @@ const myGameArea = {
         text(6);
     },
     startShootLoop: function (Turret) {
-        // console.log(this.turretsArray);
         Turret.interval = setInterval(() => {
             this.turretShoot(Turret);
         }, Turret.speed)
@@ -809,7 +850,6 @@ const myGameArea = {
         }
     },
     drawEnemy: function () {
-        //  console.log(this.enemyArray)
         this.ctx_2.clearRect(0, 0, this.canvas_2.width, this.canvas_2.height);
         if (this.enemyArray != 0) {
             this.enemyArray.forEach(enemy => {
@@ -885,8 +925,8 @@ const myGameArea = {
                     this.sounds.Enemy_got_hit.play();
                 }
                 if (e.health <= 0) {
-                    this.enemyArray.shift(e);
                     this.money = this.money + e.money;
+                    this.enemyArray.shift(e);
                     this.goldElement.innerHTML = this.money;
                 }
                 this.drawEnemy();

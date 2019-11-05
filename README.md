@@ -1,6 +1,5 @@
 # TowerDefense
 
-for testing : https://konradusko.github.io/TowerDefense/
 
 #  :book: Information:
 
@@ -28,6 +27,7 @@ Defend the last bastion of triangles build towers and don't let the squares leve
 ### :open_file_folder: License MIT
 ## :watch: Project duration : 16 days
 
+## Play: https://konradusko.github.io/TowerDefense/
  Copyright © Konrad Bolesławski
  
  Created with :heart: by Konrad Bolesławski

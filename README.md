@@ -3,7 +3,7 @@
 
 #  :book: Information:
 
-# :newspaper: Project goal:
+## :newspaper: Project goal:
 -Learning javascript,
 
 -Fulfilling the dream of own game,
@@ -27,7 +27,7 @@ Defend the last bastion of triangles build towers and don't let the squares leve
 ### :open_file_folder: License MIT
 ## :watch: Project duration : 16 days
 
-## Play: https://konradusko.github.io/TowerDefense/
+## LIVE: https://konradusko.github.io/TowerDefense/
  Copyright © Konrad Bolesławski
  
  Created with :heart: by Konrad Bolesławski

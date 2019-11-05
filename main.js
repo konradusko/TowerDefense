@@ -243,7 +243,7 @@ const myGameArea = {
         this.castlePriceForBetterLifeElement.innerHTML = this.castle.price_for_better_life;
         promise.then(() => {
             setTimeout(() => {
-                window.alert("Build your defense turrets and press'Play'");
+                window.alert("Build your defense turrets and press  'Play'");
                 this.buttonsEvents();
             }, 500);
 
